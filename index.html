@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lemon Joyride</title>
+    <title>🍋 Lemon Quest</title>
     <style>
-        /* --- global reset & fullscreen --- */
+        /* ===== GLOBAL RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -17,38 +17,116 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(145deg, #1a3a1a 0%, #2d5a27 100%);
-            /* Lemon tree vibe — you can replace with your image */
             font-family: 'Segoe UI', system-ui, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            background: #87CEEB;
         }
 
-        /* --- background decorative elements --- */
-        .bg-leaves {
-            position: absolute;
+        /* ===== MENU OVERLAY ===== */
+        #menu {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 20% 80%, #4a7c4a, #1a3a1a);
+            z-index: 100;
+            transition: opacity 0.6s ease;
+        }
+        #menu.hidden {
+            opacity: 0;
             pointer-events: none;
-            overflow: hidden;
-            z-index: 0;
         }
-        .bg-leaves span {
-            position: absolute;
-            display: block;
-            font-size: 80px;
-            opacity: 0.12;
-            animation: floatLeaves 20s infinite alternate ease-in-out;
+        #menu h1 {
+            font-size: 4rem;
+            color: #fdd835;
+            text-shadow: 0 8px 20px rgba(0,0,0,0.7), 0 0 40px #fdd83555;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
         }
-        @keyframes floatLeaves {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(40px, -30px) rotate(25deg); }
+        #menu p {
+            color: #e0e0e0;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .play-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            outline: none;
+        }
+        .play-btn:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px #fdd835);
+        }
+        .play-btn:active {
+            transform: scale(0.9);
         }
 
-        /* --- UI panel (score / title) --- */
+        /* ===== GAME CONTAINER ===== */
+        #game {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            background: #87CEEB;
+            overflow: hidden;
+        }
+
+        /* ===== LEMON TREE (CSS art) ===== */
+        .tree-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80vmin;
+            height: 90vmin;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8%;
+            height: 40%;
+            background: linear-gradient(to right, #5d3a1a, #8b5a2b, #5d3a1a);
+            border-radius: 20% 20% 0 0;
+            box-shadow: inset -5px 0 10px rgba(0,0,0,0.3);
+        }
+        .branch {
+            position: absolute;
+            background: #6b4a2a;
+            border-radius: 40%;
+        }
+        .branch-1 { width: 20%; height: 4%; top: 25%; left: -10%; transform: rotate(-30deg); }
+        .branch-2 { width: 25%; height: 4%; top: 15%; right: -12%; transform: rotate(35deg); }
+        .branch-3 { width: 15%; height: 3%; top: 5%; left: -5%; transform: rotate(-15deg); }
+        .canopy {
+            position: absolute;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 70%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 40%, #4caf50, #2e7d32, #1b5e20);
+            box-shadow: inset -20px -20px 40px rgba(0,0,0,0.3), 0 20px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+        .lemon-fruit {
+            position: absolute;
+            font-size: 3vmin;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        /* ===== UI PANEL ===== */
         .ui-panel {
             position: absolute;
             top: 20px;
@@ -59,50 +137,50 @@
             align-items: center;
             z-index: 5;
             padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
             border-radius: 40px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
-        .ui-panel h1 {
-            font-size: 1.2rem;
+        .ui-panel h2 {
             color: #fff;
+            font-size: 1.4rem;
             text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-            letter-spacing: 2px;
         }
         .ui-panel .score {
             color: #fdd835;
             font-weight: bold;
-            font-size: 1.1rem;
-            background: rgba(0,0,0,0.3);
-            padding: 4px 16px;
+            font-size: 1.3rem;
+            background: rgba(0,0,0,0.4);
+            padding: 4px 18px;
             border-radius: 30px;
-            border: 1px solid #fdd83555;
+            border: 1px solid #fdd83566;
         }
 
-        /* --- player character (lemon emoji) --- */
+        /* ===== UPDATED PLAYER (IMAGE) ===== */
         #player {
             position: absolute;
-            font-size: 80px;      /* size of 🍋 */
-            line-height: 1;
+            width: clamp(60px, 10vmin, 120px); /* Responsive size */
+            height: auto;
             pointer-events: none;
             z-index: 10;
-            transition: none;      /* instant movement */
-            filter: drop-shadow(0 12px 20px rgba(255, 215, 0, 0.5));
-            transform: translate(-50%, -50%); /* center anchor */
+            transform: translate(-50%, -50%); /* Center anchor for JS logic */
+            filter: drop-shadow(0 12px 20px rgba(255, 215, 0, 0.6));
+            transition: none;
+            border-radius: 30%; /* Smooth corners matching the lemon shape */
+            object-fit: contain;
         }
-        /* bounce when moving — added via JS class */
         #player.bounce {
-            animation: bounce 0.1s ease;
+            animation: lemonBounce 0.12s ease;
         }
-        @keyframes bounce {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1); }
+        @keyframes lemonBounce {
+            0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            40% { transform: translate(-50%, -50%) scale(1.15) rotate(5deg); }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
         }
 
-        /* --- on‑screen joystick (D‑pad) --- */
+        /* ===== JOYSTICK ===== */
         .joystick {
             position: absolute;
             bottom: 40px;
@@ -111,20 +189,20 @@
             display: grid;
             grid-template-columns: 70px 70px 70px;
             grid-template-rows: 70px 70px 70px;
-            gap: 4px;
+            gap: 6px;
             z-index: 20;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(6px);
-            padding: 10px;
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            padding: 12px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
         }
         .joystick button {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: #fff;
             display: flex;
             align-items: center;
@@ -132,96 +210,110 @@
             cursor: pointer;
             transition: background 0.1s, transform 0.05s;
             touch-action: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             outline: none;
         }
         .joystick button:active,
         .joystick button.active {
             background: rgba(255, 215, 0, 0.6);
             border-color: #fdd835;
-            transform: scale(0.92);
-            box-shadow: 0 0 20px #fdd83555;
+            transform: scale(0.88);
+            box-shadow: 0 0 30px #fdd83566;
         }
-        /* empty grid cells */
-        .joystick .empty {
-            visibility: hidden;
-        }
+        .joystick .empty { visibility: hidden; }
         .joystick .up { grid-column: 2; grid-row: 1; }
         .joystick .left { grid-column: 1; grid-row: 2; }
         .joystick .right { grid-column: 3; grid-row: 2; }
         .joystick .down { grid-column: 2; grid-row: 3; }
 
-        /* --- responsive adjustments --- */
         @media (max-width: 600px) {
-            #player { font-size: 60px; }
-            .joystick {
-                grid-template-columns: 60px 60px 60px;
-                grid-template-rows: 60px 60px 60px;
-                padding: 8px;
-                gap: 3px;
-                bottom: 20px;
-            }
-            .joystick button { font-size: 1.6rem; }
-            .ui-panel h1 { font-size: 1rem; }
+            #menu h1 { font-size: 2.8rem; }
+            .joystick { grid-template-columns: 60px 60px 60px; grid-template-rows: 60px 60px 60px; padding: 10px; gap: 4px; bottom: 20px; }
+            .joystick button { font-size: 1.8rem; }
+            .ui-panel h2 { font-size: 1rem; }
+            .ui-panel .score { font-size: 1rem; padding: 2px 12px; }
+            #player { width: clamp(50px, 14vmin, 90px); }
         }
         @media (max-width: 400px) {
-            #player { font-size: 50px; }
-            .joystick {
-                grid-template-columns: 50px 50px 50px;
-                grid-template-rows: 50px 50px 50px;
-                padding: 6px;
-                gap: 2px;
-            }
-            .joystick button { font-size: 1.2rem; }
+            .joystick { grid-template-columns: 50px 50px 50px; grid-template-rows: 50px 50px 50px; padding: 6px; gap: 3px; }
+            .joystick button { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- decorative background leaves -->
-    <div class="bg-leaves" id="bgLeaves"></div>
-
-    <!-- UI panel -->
-    <div class="ui-panel">
+    <!-- ===== MENU ===== -->
+    <div id="menu">
         <h1>🍋 LEMON GROVE</h1>
-        <span class="score" id="scoreDisplay">🍋 0</span>
+        <p>Collect lemons from the tree. Move with arrow keys or joystick.</p>
+        <button class="play-btn" onclick="startGame()">
+            <svg viewBox="0 0 120 80" width="180" height="120">
+                <ellipse cx="60" cy="40" rx="50" ry="30" fill="#FDD835" stroke="#F9A825" stroke-width="3"/>
+                <path d="M 60 10 L 55 0 L 65 0 Z" fill="#66BB6A"/>
+                <path d="M 60 70 L 55 80 L 65 80 Z" fill="#66BB6A"/>
+                <ellipse cx="45" cy="30" rx="15" ry="8" fill="#FFF9C4" opacity="0.6"/>
+                <text x="60" y="48" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="900" font-family="Arial, sans-serif" stroke="#C17900" stroke-width="1">Play</text>
+            </svg>
+        </button>
     </div>
 
-    <!-- player character -->
-    <div id="player">🍋</div>
+    <!-- ===== GAME ===== -->
+    <div id="game">
+        <div class="tree-container" id="treeContainer">
+            <div class="trunk"></div>
+            <div class="branch branch-1"></div>
+            <div class="branch branch-2"></div>
+            <div class="branch branch-3"></div>
+            <div class="canopy" id="canopy"></div>
+        </div>
 
-    <!-- joystick D‑pad -->
-    <div class="joystick">
-        <button class="up" data-dir="up">⬆</button>
-        <button class="left" data-dir="left">⬅</button>
-        <button class="empty"></button>
-        <button class="right" data-dir="right">➡</button>
-        <button class="down" data-dir="down">⬇</button>
+        <div class="ui-panel">
+            <h2>🍋 Lemon Quest</h2>
+            <span class="score" id="scoreDisplay">🍋 0</span>
+        </div>
+
+        <!-- REPLACED EMOJI WITH IMAGE. SAVE UPLOADED FILE AS "smile_lemon.png" -->
+        <img id="player" src="smile_lemon.png" alt="Smile Lemon">
+
+        <div class="joystick">
+            <button class="up" data-dir="up">⬆</button>
+            <button class="left" data-dir="left">⬅</button>
+            <button class="empty"></button>
+            <button class="right" data-dir="right">➡</button>
+            <button class="down" data-dir="down">⬇</button>
+        </div>
     </div>
 
     <script>
         // ============================================================
-        // LEMON MOVEMENT ENGINE – keyboard + touch/joystick
+        // GAME ENGINE
         // ============================================================
 
+        const menu = document.getElementById('menu');
+        const game = document.getElementById('game');
         const player = document.getElementById('player');
         const scoreSpan = document.getElementById('scoreDisplay');
+        const canopy = document.getElementById('canopy');
 
-        // Movement constants
-        const STEP = 20;          // pixels per press
-        const BOUNCE_DURATION = 100; // ms
-
-        // State
-        let x = 0, y = 0;        // center coordinates (player uses transform: translate(-50%,-50%))
+        let x = 0, y = 0;
         let score = 0;
-        let moveInterval = null;  // for held buttons
+        let moveInterval = null;
+        const STEP = 18;
+        const BOUNCE_MS = 120;
 
-        // ----- initial positioning (center) -----
+        function startGame() {
+            menu.classList.add('hidden');
+            setTimeout(() => { menu.style.display = 'none'; }, 600);
+            game.style.display = 'block';
+            centerPlayer();
+            createTreeLemons();
+            score = 0;
+            updateScore();
+        }
+
         function centerPlayer() {
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            x = w / 2;
-            y = h / 2;
+            x = window.innerWidth / 2;
+            y = window.innerHeight / 2;
             updatePosition(false);
         }
 
@@ -230,33 +322,33 @@
             player.style.top = y + 'px';
             if (bounce) {
                 player.classList.add('bounce');
-                setTimeout(() => player.classList.remove('bounce'), BOUNCE_DURATION);
+                setTimeout(() => player.classList.remove('bounce'), BOUNCE_MS);
             }
         }
 
-        // ----- movement logic with boundaries -----
         function move(dx, dy) {
-            const newX = Math.min(Math.max(x + dx, 0), window.innerWidth);
-            const newY = Math.min(Math.max(y + dy, 0), window.innerHeight);
+            const newX = Math.min(Math.max(x + dx, 10), window.innerWidth - 10);
+            const newY = Math.min(Math.max(y + dy, 10), window.innerHeight - 10);
             if (newX !== x || newY !== y) {
                 x = newX;
                 y = newY;
                 updatePosition(true);
-                // increase score on each step (reward)
                 score++;
-                scoreSpan.textContent = '🍋 ' + score;
+                updateScore();
                 return true;
             }
             return false;
         }
 
-        // ----- direction handlers -----
+        function updateScore() {
+            scoreSpan.textContent = '🍋 ' + score;
+        }
+
         function moveUp() { move(0, -STEP); }
         function moveDown() { move(0, STEP); }
         function moveLeft() { move(-STEP, 0); }
         function moveRight() { move(STEP, 0); }
 
-        // ----- keyboard support -----
         document.addEventListener('keydown', (e) => {
             if (!e.key.startsWith('Arrow')) return;
             e.preventDefault();
@@ -268,25 +360,18 @@
             }
         });
 
-        // ----- joystick (touch / mouse) support -----
         const buttons = document.querySelectorAll('.joystick button:not(.empty)');
-        // For each button, attach mousedown / touchstart for continuous movement
         buttons.forEach(btn => {
             const dir = btn.dataset.dir;
-
-            // start moving on press
             const startMove = (e) => {
-                e.preventDefault(); // avoid page scroll or context menu
-                // execute once immediately
+                e.preventDefault();
+                btn.classList.add('active');
                 switch (dir) {
                     case 'up': moveUp(); break;
                     case 'down': moveDown(); break;
                     case 'left': moveLeft(); break;
                     case 'right': moveRight(); break;
                 }
-                // add active class for visual feedback
-                btn.classList.add('active');
-                // set interval for repeated movement while held
                 if (moveInterval) clearInterval(moveInterval);
                 moveInterval = setInterval(() => {
                     switch (dir) {
@@ -295,10 +380,8 @@
                         case 'left': moveLeft(); break;
                         case 'right': moveRight(); break;
                     }
-                }, 80); // repeat every 80ms (smooth)
+                }, 70);
             };
-
-            // stop moving on release
             const stopMove = (e) => {
                 e.preventDefault();
                 btn.classList.remove('active');
@@ -307,50 +390,42 @@
                     moveInterval = null;
                 }
             };
-
-            // mouse events
             btn.addEventListener('mousedown', startMove);
             btn.addEventListener('mouseup', stopMove);
             btn.addEventListener('mouseleave', stopMove);
-            // touch events
             btn.addEventListener('touchstart', startMove, { passive: false });
             btn.addEventListener('touchend', stopMove, { passive: false });
             btn.addEventListener('touchcancel', stopMove, { passive: false });
         });
 
-        // ----- window resize: keep player inside bounds -----
         window.addEventListener('resize', () => {
-            const maxX = window.innerWidth;
-            const maxY = window.innerHeight;
+            const maxX = window.innerWidth - 10;
+            const maxY = window.innerHeight - 10;
             if (x > maxX) x = maxX;
             if (y > maxY) y = maxY;
             updatePosition(false);
         });
 
-        // ----- init background leaves (decorative) -----
-        (function initLeaves() {
-            const container = document.getElementById('bgLeaves');
-            const emojis = ['🍋', '🌿', '🍃', '🌳'];
-            for (let i = 0; i < 20; i++) {
-                const span = document.createElement('span');
-                span.textContent = emojis[i % emojis.length];
-                span.style.left = Math.random() * 100 + '%';
-                span.style.top = Math.random() * 100 + '%';
-                span.style.fontSize = (40 + Math.random() * 80) + 'px';
-                span.style.animationDuration = (15 + Math.random() * 25) + 's';
-                span.style.animationDelay = (Math.random() * 10) + 's';
-                container.appendChild(span);
+        function createTreeLemons() {
+            canopy.querySelectorAll('.lemon-fruit').forEach(el => el.remove());
+            for (let i = 0; i < 15; i++) {
+                const lemon = document.createElement('div');
+                lemon.className = 'lemon-fruit';
+                lemon.textContent = '🍋';
+                lemon.style.left = (10 + Math.random() * 80) + '%';
+                lemon.style.top = (10 + Math.random() * 80) + '%';
+                lemon.style.fontSize = (2 + Math.random() * 2.5) + 'vmin';
+                lemon.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+                canopy.appendChild(lemon);
             }
-        })();
+        }
 
-        // ----- start -----
-        centerPlayer();
-        // reset score
-        score = 0;
-        scoreSpan.textContent = '🍋 0';
+        menu.style.display = 'flex';
+        game.style.display = 'none';
 
-        // also allow click on player? not needed.
-        console.log('🍋 Lemon Joyride ready! Use arrow keys or on‑screen joystick.');
+        window.addEventListener('load', () => {
+            createTreeLemons();
+        });
     </script>
 </body>
-</html> 
+</html>
