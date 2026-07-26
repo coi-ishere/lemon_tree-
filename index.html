@@ -1,12 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🍋 Lemon Quest</title>
+    <title>Adventure of Lemon</title>
     <style>
-        /* ===== GLOBAL RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -22,7 +20,7 @@
             background: #87CEEB;
         }
 
-        /* ===== MENU OVERLAY ===== */
+        /* ----- MENU ----- */
         #menu {
             position: fixed;
             top: 0;
@@ -33,17 +31,11 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* NEW: Background image from your uploaded picture */
             background: url('menu_bg.jpg') no-repeat center center;
             background-size: cover;
             z-index: 100;
             transition: opacity 0.6s ease;
         }
-        #menu.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        /* Add a semi‑transparent overlay so text remains readable */
         #menu::before {
             content: '';
             position: absolute;
@@ -51,25 +43,36 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
             z-index: -1;
         }
-        #menu h1 {
-            font-size: 4rem;
-            color: #fdd835;
-            text-shadow: 0 8px 20px rgba(0,0,0,0.7), 0 0 40px #fdd83555;
-            margin-bottom: 20px;
-            letter-spacing: 4px;
-            position: relative;
+        #menu.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .menu-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            padding: 40px 60px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            text-align: center;
             z-index: 1;
         }
-        #menu p {
+        .menu-card h1 {
+            font-size: 4.5rem;
+            color: #fdd835;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 60px #fdd83544;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+        .menu-card p {
             color: #fff;
             font-size: 1.2rem;
-            margin-bottom: 40px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.6);
-            position: relative;
-            z-index: 1;
+            margin-bottom: 30px;
         }
         .play-btn {
             background: transparent;
@@ -77,18 +80,16 @@
             cursor: pointer;
             transition: transform 0.2s, filter 0.2s;
             outline: none;
-            position: relative;
-            z-index: 1;
         }
         .play-btn:hover {
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 30px #fdd835);
+            transform: scale(1.12);
+            filter: drop-shadow(0 0 40px #fdd835);
         }
         .play-btn:active {
             transform: scale(0.9);
         }
 
-        /* ===== GAME CONTAINER ===== */
+        /* ----- GAME ----- */
         #game {
             position: relative;
             width: 100vw;
@@ -98,55 +99,77 @@
             overflow: hidden;
         }
 
-        /* ===== LEMON TREE (CSS art) ===== */
+        /* ----- IMPROVED LEMON TREE ----- */
         .tree-container {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 80vmin;
-            height: 90vmin;
+            width: 85vmin;
+            height: 95vmin;
             pointer-events: none;
             z-index: 0;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
         }
         .trunk {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 8%;
-            height: 40%;
-            background: linear-gradient(to right, #5d3a1a, #8b5a2b, #5d3a1a);
-            border-radius: 20% 20% 0 0;
-            box-shadow: inset -5px 0 10px rgba(0,0,0,0.3);
+            width: 10%;
+            height: 45%;
+            background: linear-gradient(90deg, #5d3a1a, #8b5a2b, #5d3a1a);
+            border-radius: 30% 30% 0 0;
+            box-shadow: inset -8px 0 12px rgba(0,0,0,0.4);
         }
         .branch {
             position: absolute;
             background: #6b4a2a;
             border-radius: 40%;
+            box-shadow: inset -4px 0 6px rgba(0,0,0,0.3);
         }
-        .branch-1 { width: 20%; height: 4%; top: 25%; left: -10%; transform: rotate(-30deg); }
-        .branch-2 { width: 25%; height: 4%; top: 15%; right: -12%; transform: rotate(35deg); }
-        .branch-3 { width: 15%; height: 3%; top: 5%; left: -5%; transform: rotate(-15deg); }
+        .branch-1 { width: 25%; height: 4%; top: 30%; left: -15%; transform: rotate(-35deg); }
+        .branch-2 { width: 30%; height: 4%; top: 20%; right: -18%; transform: rotate(40deg); }
+        .branch-3 { width: 20%; height: 3%; top: 10%; left: -8%; transform: rotate(-20deg); }
+        .branch-4 { width: 22%; height: 3%; top: 5%; right: -12%; transform: rotate(25deg); }
+        .branch-5 { width: 18%; height: 3%; top: 0%; left: 5%; transform: rotate(-10deg); }
         .canopy {
             position: absolute;
-            top: -10%;
+            top: -15%;
             left: 50%;
             transform: translateX(-50%);
-            width: 120%;
-            height: 70%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 40%, #4caf50, #2e7d32, #1b5e20);
-            box-shadow: inset -20px -20px 40px rgba(0,0,0,0.3), 0 20px 40px rgba(0,0,0,0.4);
-            overflow: hidden;
+            width: 140%;
+            height: 80%;
+            border-radius: 60% 40% 50% 50%;
+            background: radial-gradient(circle at 30% 30%, #66bb6a, #388e3c, #1b5e20);
+            box-shadow: inset -30px -30px 60px rgba(0,0,0,0.5), 0 30px 50px rgba(0,0,0,0.5);
+            overflow: visible;
         }
+        /* extra leaf clusters */
+        .leaf-cluster {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #81c784, #2e7d32);
+            opacity: 0.7;
+        }
+        .leaf-cluster:nth-child(1) { width: 30%; height: 30%; top: 10%; left: -10%; }
+        .leaf-cluster:nth-child(2) { width: 35%; height: 35%; top: 0%; right: -15%; }
+        .leaf-cluster:nth-child(3) { width: 25%; height: 25%; bottom: 10%; left: 20%; }
+        .leaf-cluster:nth-child(4) { width: 20%; height: 20%; bottom: 5%; right: 10%; }
+
         .lemon-fruit {
             position: absolute;
-            font-size: 3vmin;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            font-size: 3.5vmin;
+            cursor: pointer;
+            pointer-events: auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+            transition: transform 0.1s;
+        }
+        .lemon-fruit:hover {
+            transform: scale(1.2);
         }
 
-        /* ===== UI PANEL ===== */
+        /* ----- UI PANEL ----- */
         .ui-panel {
             position: absolute;
             top: 20px;
@@ -156,29 +179,131 @@
             justify-content: space-between;
             align-items: center;
             z-index: 5;
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
         .ui-panel h2 {
             color: #fff;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             text-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
         .ui-panel .score {
             color: #fdd835;
             font-weight: bold;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             background: rgba(0,0,0,0.4);
-            padding: 4px 18px;
+            padding: 4px 20px;
             border-radius: 30px;
             border: 1px solid #fdd83566;
         }
+        /* Shop button - yellow-red */
+        .shop-btn {
+            background: linear-gradient(135deg, #ffd700, #ff4500);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.5);
+            transition: transform 0.1s, box-shadow 0.2s;
+            z-index: 6;
+        }
+        .shop-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(255, 69, 0, 0.7);
+        }
+        .shop-btn:active {
+            transform: scale(0.95);
+        }
 
-        /* ===== PLAYER (IMAGE) ===== */
+        /* ----- SHOP MODAL ----- */
+        #shopModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+        #shopModal.active {
+            display: flex;
+        }
+        .shop-content {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 50px;
+            border-radius: 40px;
+            border: 2px solid #fdd835;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            text-align: center;
+            min-width: 300px;
+        }
+        .shop-content h2 {
+            color: #fdd835;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            border-radius: 20px;
+            margin: 15px 0;
+        }
+        .shop-item span {
+            color: #fff;
+            font-size: 1.2rem;
+        }
+        .shop-item .cost {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .shop-item button {
+            background: linear-gradient(135deg, #ffd700, #ff4500);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 18px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .shop-item button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .shop-item button:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .close-shop {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 30px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .close-shop:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* ----- PLAYER ----- */
         #player {
             position: absolute;
             width: clamp(60px, 10vmin, 120px);
@@ -200,7 +325,7 @@
             100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
         }
 
-        /* ===== JOYSTICK ===== */
+        /* ----- JOYSTICK ----- */
         .joystick {
             position: absolute;
             bottom: 40px;
@@ -211,7 +336,7 @@
             grid-template-rows: 70px 70px 70px;
             gap: 6px;
             z-index: 20;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(8px);
             padding: 12px;
             border-radius: 50px;
@@ -247,12 +372,15 @@
         .joystick .down { grid-column: 2; grid-row: 3; }
 
         @media (max-width: 600px) {
-            #menu h1 { font-size: 2.8rem; }
+            .menu-card { padding: 30px 30px; }
+            .menu-card h1 { font-size: 3rem; }
             .joystick { grid-template-columns: 60px 60px 60px; grid-template-rows: 60px 60px 60px; padding: 10px; gap: 4px; bottom: 20px; }
             .joystick button { font-size: 1.8rem; }
             .ui-panel h2 { font-size: 1rem; }
             .ui-panel .score { font-size: 1rem; padding: 2px 12px; }
+            .shop-btn { padding: 6px 14px; font-size: 1rem; }
             #player { width: clamp(50px, 14vmin, 90px); }
+            .shop-content { padding: 30px 20px; min-width: auto; }
         }
         @media (max-width: 400px) {
             .joystick { grid-template-columns: 50px 50px 50px; grid-template-rows: 50px 50px 50px; padding: 6px; gap: 3px; }
@@ -261,39 +389,49 @@
     </style>
 </head>
 <body>
-
-    <!-- ===== MENU ===== -->
+    <!-- MENU -->
     <div id="menu">
-        <h1>🍋 LEMON GROVE</h1>
-        <p>Collect lemons from the tree. Move with arrow keys or joystick.</p>
-        <button class="play-btn" onclick="startGame()">
-            <svg viewBox="0 0 120 80" width="180" height="120">
-                <ellipse cx="60" cy="40" rx="50" ry="30" fill="#FDD835" stroke="#F9A825" stroke-width="3"/>
-                <path d="M 60 10 L 55 0 L 65 0 Z" fill="#66BB6A"/>
-                <path d="M 60 70 L 55 80 L 65 80 Z" fill="#66BB6A"/>
-                <ellipse cx="45" cy="30" rx="15" ry="8" fill="#FFF9C4" opacity="0.6"/>
-                <text x="60" y="48" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="900" font-family="Arial, sans-serif" stroke="#C17900" stroke-width="1">Play</text>
-            </svg>
-        </button>
+        <div class="menu-card">
+            <h1>🍋 Adventure of Lemon</h1>
+            <p>Move with arrow keys or joystick. Touch lemons on the tree to earn 5 points each!</p>
+            <button class="play-btn" onclick="startGame()">
+                <svg viewBox="0 0 120 80" width="180" height="120">
+                    <ellipse cx="60" cy="40" rx="50" ry="30" fill="#FDD835" stroke="#F9A825" stroke-width="3"/>
+                    <path d="M 60 10 L 55 0 L 65 0 Z" fill="#66BB6A"/>
+                    <path d="M 60 70 L 55 80 L 65 80 Z" fill="#66BB6A"/>
+                    <ellipse cx="45" cy="30" rx="15" ry="8" fill="#FFF9C4" opacity="0.6"/>
+                    <text x="60" y="48" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="900" font-family="Arial, sans-serif" stroke="#C17900" stroke-width="1">Play</text>
+                </svg>
+            </button>
+        </div>
     </div>
 
-    <!-- ===== GAME ===== -->
+    <!-- GAME -->
     <div id="game">
         <div class="tree-container" id="treeContainer">
             <div class="trunk"></div>
             <div class="branch branch-1"></div>
             <div class="branch branch-2"></div>
             <div class="branch branch-3"></div>
-            <div class="canopy" id="canopy"></div>
+            <div class="branch branch-4"></div>
+            <div class="branch branch-5"></div>
+            <div class="canopy" id="canopy">
+                <div class="leaf-cluster"></div>
+                <div class="leaf-cluster"></div>
+                <div class="leaf-cluster"></div>
+                <div class="leaf-cluster"></div>
+            </div>
         </div>
 
         <div class="ui-panel">
-            <h2>🍋 Lemon Quest</h2>
+            <h2>🍋 Adventure</h2>
             <span class="score" id="scoreDisplay">🍋 0</span>
+            <button class="shop-btn" id="shopBtn">🛒 Shop</button>
         </div>
 
-        <!-- Character image: save as "smile_lemon.png" -->
-        <img id="player" src="smile_lemon.png" alt="Smile Lemon">
+        <!-- Character with fallback: if image fails, show emoji -->
+        <img id="player" src="smile_lemon.png" alt="Smile Lemon" onerror="this.style.display='none'; document.getElementById('fallbackEmoji').style.display='block';">
+        <div id="fallbackEmoji" style="display:none; position:absolute; font-size:clamp(60px,10vmin,120px); pointer-events:none; z-index:10; transform:translate(-50%,-50%); filter:drop-shadow(0 12px 20px rgba(255,215,0,0.6));">🍋</div>
 
         <div class="joystick">
             <button class="up" data-dir="up">⬆</button>
@@ -304,6 +442,19 @@
         </div>
     </div>
 
+    <!-- SHOP MODAL -->
+    <div id="shopModal">
+        <div class="shop-content">
+            <h2>🍋 Lemon Shop</h2>
+            <div class="shop-item">
+                <span>⚔️ Sword</span>
+                <span class="cost">150 🍋</span>
+                <button id="buySwordBtn" onclick="buySword()">Buy</button>
+            </div>
+            <button class="close-shop" onclick="closeShop()">Close</button>
+        </div>
+    </div>
+
     <script>
         // ============================================================
         // GAME ENGINE
@@ -311,9 +462,23 @@
 
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
-        const player = document.getElementById('player');
+        const playerImg = document.getElementById('player');
+        const fallbackEmoji = document.getElementById('fallbackEmoji');
         const scoreSpan = document.getElementById('scoreDisplay');
         const canopy = document.getElementById('canopy');
+        const shopModal = document.getElementById('shopModal');
+        const shopBtn = document.getElementById('shopBtn');
+        const buySwordBtn = document.getElementById('buySwordBtn');
+
+        // Use either image or emoji as the displayed element
+        let playerElement = playerImg;
+        // Check if image loaded successfully
+        playerImg.addEventListener('load', () => {
+            playerImg.style.display = 'block';
+            fallbackEmoji.style.display = 'none';
+            playerElement = playerImg;
+        });
+        // If image fails, fallback is already set by onerror
 
         let x = 0, y = 0;
         let score = 0;
@@ -321,14 +486,24 @@
         const STEP = 18;
         const BOUNCE_MS = 120;
 
+        // Lemon fruits collection
+        let lemonFruits = [];
+
         function startGame() {
             menu.classList.add('hidden');
             setTimeout(() => { menu.style.display = 'none'; }, 600);
             game.style.display = 'block';
             centerPlayer();
-            createTreeLemons();
+            spawnLemons(15);
             score = 0;
             updateScore();
+            // Show shop button
+            shopBtn.style.display = 'block';
+            // Check if sword owned (if any - we store in localStorage)
+            if (localStorage.getItem('swordOwned') === 'true') {
+                buySwordBtn.disabled = true;
+                buySwordBtn.textContent = 'Owned';
+            }
         }
 
         function centerPlayer() {
@@ -338,11 +513,11 @@
         }
 
         function updatePosition(bounce = true) {
-            player.style.left = x + 'px';
-            player.style.top = y + 'px';
+            playerElement.style.left = x + 'px';
+            playerElement.style.top = y + 'px';
             if (bounce) {
-                player.classList.add('bounce');
-                setTimeout(() => player.classList.remove('bounce'), BOUNCE_MS);
+                playerElement.classList.add('bounce');
+                setTimeout(() => playerElement.classList.remove('bounce'), BOUNCE_MS);
             }
         }
 
@@ -353,8 +528,8 @@
                 x = newX;
                 y = newY;
                 updatePosition(true);
-                score++;
-                updateScore();
+                // Check collision with lemons
+                checkLemonCollection();
                 return true;
             }
             return false;
@@ -362,8 +537,67 @@
 
         function updateScore() {
             scoreSpan.textContent = '🍋 ' + score;
+            // Update shop button state
+            if (score >= 150 && !localStorage.getItem('swordOwned')) {
+                buySwordBtn.disabled = false;
+            } else {
+                buySwordBtn.disabled = true;
+            }
         }
 
+        // ----- LEMON COLLECTION -----
+        function spawnLemons(count) {
+            // Remove existing fruits
+            lemonFruits.forEach(f => f.remove());
+            lemonFruits = [];
+            const canopyRect = canopy.getBoundingClientRect();
+            for (let i = 0; i < count; i++) {
+                createLemon();
+            }
+        }
+
+        function createLemon() {
+            const lemon = document.createElement('div');
+            lemon.className = 'lemon-fruit';
+            lemon.textContent = '🍋';
+            // Random position within canopy (percentage based)
+            const left = 5 + Math.random() * 90;
+            const top = 5 + Math.random() * 90;
+            lemon.style.left = left + '%';
+            lemon.style.top = top + '%';
+            lemon.style.fontSize = (2.5 + Math.random() * 2) + 'vmin';
+            lemon.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+            canopy.appendChild(lemon);
+            lemonFruits.push(lemon);
+            return lemon;
+        }
+
+        function checkLemonCollection() {
+            // Get player's bounding box (approximate center)
+            const pRect = playerElement.getBoundingClientRect();
+            const pCenterX = pRect.left + pRect.width / 2;
+            const pCenterY = pRect.top + pRect.height / 2;
+            // Iterate over lemons
+            for (let i = lemonFruits.length - 1; i >= 0; i--) {
+                const lemon = lemonFruits[i];
+                const lRect = lemon.getBoundingClientRect();
+                const lCenterX = lRect.left + lRect.width / 2;
+                const lCenterY = lRect.top + lRect.height / 2;
+                const dist = Math.hypot(pCenterX - lCenterX, pCenterY - lCenterY);
+                if (dist < 60) { // collision threshold
+                    // Collect
+                    lemon.remove();
+                    lemonFruits.splice(i, 1);
+                    score += 5;
+                    updateScore();
+                    // Respawn a new lemon at random position
+                    createLemon();
+                    break; // collect one per frame to avoid multiple at once
+                }
+            }
+        }
+
+        // ----- MOVEMENT HELPERS -----
         function moveUp() { move(0, -STEP); }
         function moveDown() { move(0, STEP); }
         function moveLeft() { move(-STEP, 0); }
@@ -380,6 +614,7 @@
             }
         });
 
+        // Joystick
         const buttons = document.querySelectorAll('.joystick button:not(.empty)');
         buttons.forEach(btn => {
             const dir = btn.dataset.dir;
@@ -426,26 +661,45 @@
             updatePosition(false);
         });
 
-        function createTreeLemons() {
-            canopy.querySelectorAll('.lemon-fruit').forEach(el => el.remove());
-            for (let i = 0; i < 15; i++) {
-                const lemon = document.createElement('div');
-                lemon.className = 'lemon-fruit';
-                lemon.textContent = '🍋';
-                lemon.style.left = (10 + Math.random() * 80) + '%';
-                lemon.style.top = (10 + Math.random() * 80) + '%';
-                lemon.style.fontSize = (2 + Math.random() * 2.5) + 'vmin';
-                lemon.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
-                canopy.appendChild(lemon);
+        // ----- SHOP -----
+        shopBtn.addEventListener('click', () => {
+            shopModal.classList.add('active');
+        });
+
+        function closeShop() {
+            shopModal.classList.remove('active');
+        }
+
+        function buySword() {
+            if (score >= 150 && !localStorage.getItem('swordOwned')) {
+                score -= 150;
+                updateScore();
+                localStorage.setItem('swordOwned', 'true');
+                buySwordBtn.disabled = true;
+                buySwordBtn.textContent = '⚔️ Owned';
+                alert('You bought a sword!');
+                closeShop();
+            } else {
+                alert('Not enough lemon points!');
             }
         }
 
+        // Initialize
         menu.style.display = 'flex';
         game.style.display = 'none';
+        shopBtn.style.display = 'block';
 
+        // Pre-spawn lemons on load (though game not started, they will be hidden)
         window.addEventListener('load', () => {
-            createTreeLemons();
+            // We'll spawn when game starts
         });
+
+        // Click outside modal to close
+        shopModal.addEventListener('click', (e) => {
+            if (e.target === shopModal) closeShop();
+        });
+
+        console.log('🍋 Adventure of Lemon loaded. Click Play to start!');
     </script>
 </body>
 </html>
