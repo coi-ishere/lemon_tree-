@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +33,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle at 20% 80%, #4a7c4a, #1a3a1a);
+            /* NEW: Background image from your uploaded picture */
+            background: url('menu_bg.jpg') no-repeat center center;
+            background-size: cover;
             z-index: 100;
             transition: opacity 0.6s ease;
         }
@@ -40,18 +43,33 @@
             opacity: 0;
             pointer-events: none;
         }
+        /* Add a semi‑transparent overlay so text remains readable */
+        #menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
         #menu h1 {
             font-size: 4rem;
             color: #fdd835;
             text-shadow: 0 8px 20px rgba(0,0,0,0.7), 0 0 40px #fdd83555;
             margin-bottom: 20px;
             letter-spacing: 4px;
+            position: relative;
+            z-index: 1;
         }
         #menu p {
-            color: #e0e0e0;
+            color: #fff;
             font-size: 1.2rem;
             margin-bottom: 40px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 1;
         }
         .play-btn {
             background: transparent;
@@ -59,6 +77,8 @@
             cursor: pointer;
             transition: transform 0.2s, filter 0.2s;
             outline: none;
+            position: relative;
+            z-index: 1;
         }
         .play-btn:hover {
             transform: scale(1.1);
@@ -158,17 +178,17 @@
             border: 1px solid #fdd83566;
         }
 
-        /* ===== UPDATED PLAYER (IMAGE) ===== */
+        /* ===== PLAYER (IMAGE) ===== */
         #player {
             position: absolute;
-            width: clamp(60px, 10vmin, 120px); /* Responsive size */
+            width: clamp(60px, 10vmin, 120px);
             height: auto;
             pointer-events: none;
             z-index: 10;
-            transform: translate(-50%, -50%); /* Center anchor for JS logic */
+            transform: translate(-50%, -50%);
             filter: drop-shadow(0 12px 20px rgba(255, 215, 0, 0.6));
             transition: none;
-            border-radius: 30%; /* Smooth corners matching the lemon shape */
+            border-radius: 30%;
             object-fit: contain;
         }
         #player.bounce {
@@ -272,7 +292,7 @@
             <span class="score" id="scoreDisplay">🍋 0</span>
         </div>
 
-        <!-- REPLACED EMOJI WITH IMAGE. SAVE UPLOADED FILE AS "smile_lemon.png" -->
+        <!-- Character image: save as "smile_lemon.png" -->
         <img id="player" src="smile_lemon.png" alt="Smile Lemon">
 
         <div class="joystick">
