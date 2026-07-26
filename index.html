@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lemon Joyride</title>
+    <style>
+        /* --- global reset & fullscreen --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(145deg, #1a3a1a 0%, #2d5a27 100%);
+            /* Lemon tree vibe — you can replace with your image */
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* --- background decorative elements --- */
+        .bg-leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .bg-leaves span {
+            position: absolute;
+            display: block;
+            font-size: 80px;
+            opacity: 0.12;
+            animation: floatLeaves 20s infinite alternate ease-in-out;
+        }
+        @keyframes floatLeaves {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(40px, -30px) rotate(25deg); }
+        }
+
+        /* --- UI panel (score / title) --- */
+        .ui-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .ui-panel h1 {
+            font-size: 1.2rem;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 2px;
+        }
+        .ui-panel .score {
+            color: #fdd835;
+            font-weight: bold;
+            font-size: 1.1rem;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 16px;
+            border-radius: 30px;
+            border: 1px solid #fdd83555;
+        }
+
+        /* --- player character (lemon emoji) --- */
+        #player {
+            position: absolute;
+            font-size: 80px;      /* size of 🍋 */
+            line-height: 1;
+            pointer-events: none;
+            z-index: 10;
+            transition: none;      /* instant movement */
+            filter: drop-shadow(0 12px 20px rgba(255, 215, 0, 0.5));
+            transform: translate(-50%, -50%); /* center anchor */
+        }
+        /* bounce when moving — added via JS class */
+        #player.bounce {
+            animation: bounce 0.1s ease;
+        }
+        @keyframes bounce {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* --- on‑screen joystick (D‑pad) --- */
+        .joystick {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: 70px 70px 70px;
+            grid-template-rows: 70px 70px 70px;
+            gap: 4px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(6px);
+            padding: 10px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .joystick button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            font-size: 2rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.1s, transform 0.05s;
+            touch-action: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            outline: none;
+        }
+        .joystick button:active,
+        .joystick button.active {
+            background: rgba(255, 215, 0, 0.6);
+            border-color: #fdd835;
+            transform: scale(0.92);
+            box-shadow: 0 0 20px #fdd83555;
+        }
+        /* empty grid cells */
+        .joystick .empty {
+            visibility: hidden;
+        }
+        .joystick .up { grid-column: 2; grid-row: 1; }
+        .joystick .left { grid-column: 1; grid-row: 2; }
+        .joystick .right { grid-column: 3; grid-row: 2; }
+        .joystick .down { grid-column: 2; grid-row: 3; }
+
+        /* --- responsive adjustments --- */
+        @media (max-width: 600px) {
+            #player { font-size: 60px; }
+            .joystick {
+                grid-template-columns: 60px 60px 60px;
+                grid-template-rows: 60px 60px 60px;
+                padding: 8px;
+                gap: 3px;
+                bottom: 20px;
+            }
+            .joystick button { font-size: 1.6rem; }
+            .ui-panel h1 { font-size: 1rem; }
+        }
+        @media (max-width: 400px) {
+            #player { font-size: 50px; }
+            .joystick {
+                grid-template-columns: 50px 50px 50px;
+                grid-template-rows: 50px 50px 50px;
+                padding: 6px;
+                gap: 2px;
+            }
+            .joystick button { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- decorative background leaves -->
+    <div class="bg-leaves" id="bgLeaves"></div>
+
+    <!-- UI panel -->
+    <div class="ui-panel">
+        <h1>🍋 LEMON GROVE</h1>
+        <span class="score" id="scoreDisplay">🍋 0</span>
+    </div>
+
+    <!-- player character -->
+    <div id="player">🍋</div>
+
+    <!-- joystick D‑pad -->
+    <div class="joystick">
+        <button class="up" data-dir="up">⬆</button>
+        <button class="left" data-dir="left">⬅</button>
+        <button class="empty"></button>
+        <button class="right" data-dir="right">➡</button>
+        <button class="down" data-dir="down">⬇</button>
+    </div>
+
+    <script>
+        // ============================================================
+        // LEMON MOVEMENT ENGINE – keyboard + touch/joystick
+        // ============================================================
+
+        const player = document.getElementById('player');
+        const scoreSpan = document.getElementById('scoreDisplay');
+
+        // Movement constants
+        const STEP = 20;          // pixels per press
+        const BOUNCE_DURATION = 100; // ms
+
+        // State
+        let x = 0, y = 0;        // center coordinates (player uses transform: translate(-50%,-50%))
+        let score = 0;
+        let moveInterval = null;  // for held buttons
+
+        // ----- initial positioning (center) -----
+        function centerPlayer() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            x = w / 2;
+            y = h / 2;
+            updatePosition(false);
+        }
+
+        function updatePosition(bounce = true) {
+            player.style.left = x + 'px';
+            player.style.top = y + 'px';
+            if (bounce) {
+                player.classList.add('bounce');
+                setTimeout(() => player.classList.remove('bounce'), BOUNCE_DURATION);
+            }
+        }
+
+        // ----- movement logic with boundaries -----
+        function move(dx, dy) {
+            const newX = Math.min(Math.max(x + dx, 0), window.innerWidth);
+            const newY = Math.min(Math.max(y + dy, 0), window.innerHeight);
+            if (newX !== x || newY !== y) {
+                x = newX;
+                y = newY;
+                updatePosition(true);
+                // increase score on each step (reward)
+                score++;
+                scoreSpan.textContent = '🍋 ' + score;
+                return true;
+            }
+            return false;
+        }
+
+        // ----- direction handlers -----
+        function moveUp() { move(0, -STEP); }
+        function moveDown() { move(0, STEP); }
+        function moveLeft() { move(-STEP, 0); }
+        function moveRight() { move(STEP, 0); }
+
+        // ----- keyboard support -----
+        document.addEventListener('keydown', (e) => {
+            if (!e.key.startsWith('Arrow')) return;
+            e.preventDefault();
+            switch (e.key) {
+                case 'ArrowUp': moveUp(); break;
+                case 'ArrowDown': moveDown(); break;
+                case 'ArrowLeft': moveLeft(); break;
+                case 'ArrowRight': moveRight(); break;
+            }
+        });
+
+        // ----- joystick (touch / mouse) support -----
+        const buttons = document.querySelectorAll('.joystick button:not(.empty)');
+        // For each button, attach mousedown / touchstart for continuous movement
+        buttons.forEach(btn => {
+            const dir = btn.dataset.dir;
+
+            // start moving on press
+            const startMove = (e) => {
+                e.preventDefault(); // avoid page scroll or context menu
+                // execute once immediately
+                switch (dir) {
+                    case 'up': moveUp(); break;
+                    case 'down': moveDown(); break;
+                    case 'left': moveLeft(); break;
+                    case 'right': moveRight(); break;
+                }
+                // add active class for visual feedback
+                btn.classList.add('active');
+                // set interval for repeated movement while held
+                if (moveInterval) clearInterval(moveInterval);
+                moveInterval = setInterval(() => {
+                    switch (dir) {
+                        case 'up': moveUp(); break;
+                        case 'down': moveDown(); break;
+                        case 'left': moveLeft(); break;
+                        case 'right': moveRight(); break;
+                    }
+                }, 80); // repeat every 80ms (smooth)
+            };
+
+            // stop moving on release
+            const stopMove = (e) => {
+                e.preventDefault();
+                btn.classList.remove('active');
+                if (moveInterval) {
+                    clearInterval(moveInterval);
+                    moveInterval = null;
+                }
+            };
+
+            // mouse events
+            btn.addEventListener('mousedown', startMove);
+            btn.addEventListener('mouseup', stopMove);
+            btn.addEventListener('mouseleave', stopMove);
+            // touch events
+            btn.addEventListener('touchstart', startMove, { passive: false });
+            btn.addEventListener('touchend', stopMove, { passive: false });
+            btn.addEventListener('touchcancel', stopMove, { passive: false });
+        });
+
+        // ----- window resize: keep player inside bounds -----
+        window.addEventListener('resize', () => {
+            const maxX = window.innerWidth;
+            const maxY = window.innerHeight;
+            if (x > maxX) x = maxX;
+            if (y > maxY) y = maxY;
+            updatePosition(false);
+        });
+
+        // ----- init background leaves (decorative) -----
+        (function initLeaves() {
+            const container = document.getElementById('bgLeaves');
+            const emojis = ['🍋', '🌿', '🍃', '🌳'];
+            for (let i = 0; i < 20; i++) {
+                const span = document.createElement('span');
+                span.textContent = emojis[i % emojis.length];
+                span.style.left = Math.random() * 100 + '%';
+                span.style.top = Math.random() * 100 + '%';
+                span.style.fontSize = (40 + Math.random() * 80) + 'px';
+                span.style.animationDuration = (15 + Math.random() * 25) + 's';
+                span.style.animationDelay = (Math.random() * 10) + 's';
+                container.appendChild(span);
+            }
+        })();
+
+        // ----- start -----
+        centerPlayer();
+        // reset score
+        score = 0;
+        scoreSpan.textContent = '🍋 0';
+
+        // also allow click on player? not needed.
+        console.log('🍋 Lemon Joyride ready! Use arrow keys or on‑screen joystick.');
+    </script>
+</body>
+</html> 
