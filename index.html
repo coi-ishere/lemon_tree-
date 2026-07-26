@@ -108,6 +108,20 @@
             overflow: hidden;
         }
 
+        /* --- FALLING LEAVES PARTICLES --- */
+        .leaf-particle {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.7;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.7; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
+        }
+
         .tree-container {
             position: absolute;
             bottom: 0;
@@ -116,7 +130,7 @@
             width: 90vmin;
             height: 100vmin;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
         .tree-shadow {
             position: absolute;
@@ -183,8 +197,13 @@
             cursor: pointer;
             pointer-events: auto;
             filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, filter 0.2s;
             z-index: 2;
+            animation: lemonGlow 2s ease-in-out infinite alternate;
+        }
+        @keyframes lemonGlow {
+            0% { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5)) brightness(1); }
+            100% { filter: drop-shadow(0 6px 20px rgba(255, 215, 0, 0.8)) brightness(1.1); }
         }
         .lemon-fruit:hover {
             transform: scale(1.4) rotate(20deg);
@@ -441,7 +460,6 @@
         const buySwordBtn = document.getElementById('buySwordBtn');
 
         let playerElement = playerImg;
-
         playerImg.onerror = () => {
             playerImg.style.display = 'none';
             fallbackEmoji.style.display = 'block';
@@ -455,13 +473,63 @@
             playerElement.classList.add('idle');
         };
 
-        let x = 0, y = 0;
-        let score = 0;
-        let moveInterval = null;
+        let x = 0, y = 0, score = 0, moveInterval = null;
         const STEP = 18;
         let lemonFruits = [];
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playTone(freq, duration, type = 'sine', volume = 0.3) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playCollectSound() {
+            playTone(523, 0.1, 'sine', 0.2);
+            setTimeout(() => playTone(659, 0.1, 'sine', 0.2), 80);
+            setTimeout(() => playTone(784, 0.15, 'sine', 0.2), 160);
+        }
+
+        function playBuySound() {
+            playTone(440, 0.15, 'triangle', 0.3);
+            setTimeout(() => playTone(554, 0.15, 'triangle', 0.3), 150);
+            setTimeout(() => playTone(659, 0.2, 'triangle', 0.3), 300);
+        }
+
+        let bgMusicInterval = null;
+        function startBgMusic() {
+            if (bgMusicInterval) return;
+            initAudio();
+            const notes = [523, 587, 659, 784, 659, 587, 523, 659];
+            let idx = 0;
+            bgMusicInterval = setInterval(() => {
+                playTone(notes[idx % notes.length], 0.3, 'sine', 0.05);
+                idx++;
+            }, 400);
+        }
+
+        function stopBgMusic() {
+            if (bgMusicInterval) {
+                clearInterval(bgMusicInterval);
+                bgMusicInterval = null;
+            }
+        }
 
         function startGame() {
+            initAudio();
+            startBgMusic();
             menu.classList.add('hidden');
             setTimeout(() => { menu.style.display = 'none'; }, 800);
             game.style.display = 'block';
@@ -473,6 +541,8 @@
                 buySwordBtn.disabled = true;
                 buySwordBtn.textContent = '⚔️ Owned';
             }
+            // Create falling leaves
+            createLeafParticles();
         }
 
         function centerPlayer() {
@@ -521,9 +591,7 @@
         function spawnLemons(count) {
             lemonFruits.forEach(f => f.remove());
             lemonFruits = [];
-            for (let i = 0; i < count; i++) {
-                createLemon();
-            }
+            for (let i = 0; i < count; i++) createLemon();
         }
 
         function createLemon() {
@@ -556,6 +624,7 @@
                     lemonFruits.splice(i, 1);
                     score += 5;
                     updateScore();
+                    playCollectSound();
                     createLemon();
                     break;
                 }
@@ -624,6 +693,20 @@
             updatePosition(false);
         });
 
+        function createLeafParticles() {
+            const leaves = ['🍃', '🌿', '🍂'];
+            for (let i = 0; i < 15; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf-particle';
+                leaf.textContent = leaves[i % leaves.length];
+                leaf.style.left = Math.random() * 100 + '%';
+                leaf.style.fontSize = (1.5 + Math.random() * 1.5) + 'rem';
+                leaf.style.animationDuration = (8 + Math.random() * 12) + 's';
+                leaf.style.animationDelay = (Math.random() * 10) + 's';
+                game.appendChild(leaf);
+            }
+        }
+
         shopBtn.addEventListener('click', () => shopModal.classList.add('active'));
         function closeShop() { shopModal.classList.remove('active'); }
         shopModal.addEventListener('click', (e) => { if (e.target === shopModal) closeShop(); });
@@ -635,6 +718,7 @@
                 localStorage.setItem('swordOwned', 'true');
                 buySwordBtn.disabled = true;
                 buySwordBtn.textContent = '⚔️ Owned';
+                playBuySound();
                 closeShop();
             }
         }
