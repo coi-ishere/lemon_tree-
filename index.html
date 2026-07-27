@@ -376,10 +376,14 @@
         let wormMaxHP=50, wormHP=50;
         let playerMaxHP=67, playerHP=67;
         let isSpikeActive=false, spikeElement=null;
-        let spikeSpeed=3.5; // SLOWER speed for better tracking
+        
+        // SLOWED DOWN spike speed specifically for parry reaction time
+        let spikeSpeed=2.0; 
+        
         let wormAttackTimer=0;
         let isParrying=false, isSpikeDeflected=false;
         let arenaLoopId=null;
+        let spikeLifetime=0; // Prevent forever loops
 
         function startGame() {
             initAudio();
@@ -452,7 +456,7 @@
             return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
         }
 
-        // ADVENTURE LOOP - DYNAMIC HOMING PROJECTILE
+        // ADVENTURE LOOP - GUARANTEED 3 SEC DELAY & SLOW HOMING
         function startAdventureLoop() {
             if (arenaLoopId) cancelAnimationFrame(arenaLoopId);
             wormAttackTimer=0;
@@ -461,7 +465,7 @@
         function arenaLoop() {
             if (!adventureOverlay.classList.contains('active')) return;
             
-            // Fire Spike every 3 seconds (180 frames at 60fps)
+            // 3 Second timer (180 frames)
             wormAttackTimer++;
             if (wormAttackTimer >= 180 && !isSpikeActive && wormHP > 0) {
                 wormAttackTimer = 0;
@@ -481,7 +485,7 @@
                     dx = wCX - curX;
                     dy = wCY - curY;
                 } else {
-                    // DYNAMIC HOMING: Calculate vector to player's current center EVERY FRAME
+                    // DYNAMIC HOMING: Calculate vector to player's center EVERY FRAME
                     const pRect = document.querySelector('.battle-player').getBoundingClientRect();
                     const pCX = pRect.left + pRect.width/2;
                     const pCY = pRect.top + pRect.height/2;
@@ -492,7 +496,7 @@
                 const hyp = Math.hypot(dx, dy);
                 let moveX = 0, moveY = 0;
                 if (hyp > 0) {
-                    // Apply normalized speed
+                    // Determine speed
                     const currentSpeed = isSpikeDeflected ? 16 : spikeSpeed;
                     moveX = (dx / hyp) * currentSpeed;
                     moveY = (dy / hyp) * currentSpeed;
@@ -503,10 +507,9 @@
                 spikeElement.style.left = (newX - 17.5) + 'px';
                 spikeElement.style.top = (newY - 17.5) + 'px';
 
-                // **CRITICAL FIX: Off-screen cleanup** 
-                const arenaRect = battleArena.getBoundingClientRect();
-                if (rect.left < arenaRect.left - 100 || rect.right > arenaRect.right + 100 || 
-                    rect.top < arenaRect.top - 100 || rect.bottom > arenaRect.bottom + 100) {
+                // **LIFETIME CLEANUP (Prevents stuck spikes)**
+                spikeLifetime++;
+                if (spikeLifetime > 240) { // Auto delete after 4 seconds
                     resetSpike();
                     arenaLoopId = requestAnimationFrame(arenaLoop);
                     return;
@@ -515,7 +518,7 @@
                 // TOUCH COLLISION CHECKS
                 const spikeRect = spikeElement.getBoundingClientRect();
                 
-                // Spike touches Player (only if NOT deflected)
+                // Spike touches Player
                 if (!isSpikeDeflected) {
                     const pRect = document.querySelector('.battle-player').getBoundingClientRect();
                     if (rectIntersect(spikeRect, pRect)) {
@@ -556,13 +559,15 @@
             
             isSpikeActive = true;
             isSpikeDeflected = false;
+            spikeLifetime = 0; // Reset lifetime counter
         }
 
         function resetSpike() {
             if (spikeElement) { spikeElement.remove(); spikeElement = null; }
             isSpikeActive = false;
             isSpikeDeflected = false;
-            wormAttackTimer = 160; // reset timer for exact 3s delay
+            wormAttackTimer = 0; // THIS FORCES THE 3 SECOND DELAY
+            spikeLifetime = 0;
         }
 
         // ===== SPARKLE SYSTEM =====
@@ -595,7 +600,7 @@
             const sCX = sRect.left + sRect.width/2;
             const sCY = sRect.top + sRect.height/2;
             
-            if (Math.hypot(pCX - sCX, pCY - sCY) < 250) { // Slightly wider easy parry
+            if (Math.hypot(pCX - sCX, pCY - sCY) < 250) {
                 playParrySound();
                 createSparkles(pCX, pCY);
                 isSpikeDeflected = true;
