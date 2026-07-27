@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Adventure of Lemon</title>
     <style>
-        /* --- Reset & Base Setup --- */
+        /* ===== GLOBAL RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +21,7 @@
             background: #6DC6E4;
         }
 
-        /* --- Moving Clouds --- */
+        /* ===== CLOUDS ===== */
         .clouds {
             position: absolute;
             inset: 0;
@@ -43,7 +43,7 @@
         .cloud:nth-child(4) { width: 100px; height: 45px; top: 30%; animation-duration: 32s; }
         @keyframes drift { 0% { transform: translateX(-20vw); } 100% { transform: translateX(110vw); } }
 
-        /* --- Menu --- */
+        /* ===== MENU ===== */
         #menu {
             position: fixed;
             inset: 0;
@@ -96,7 +96,7 @@
         .play-btn svg { width: 180px; height: 120px; transition: transform 0.2s; }
         .play-btn:hover svg { transform: scale(1.1) rotate(-3deg); }
 
-        /* --- Game Container --- */
+        /* ===== GAME ===== */
         #game {
             position: relative;
             width: 100vw;
@@ -106,7 +106,7 @@
             overflow: hidden;
         }
 
-        /* --- Lemon Tree (No Eyes, Smaller for PC) --- */
+        /* ===== LEMON TREE (NO EYES, SMALLER, BETTER) ===== */
         .tree-container {
             position: absolute;
             bottom: 0;
@@ -129,17 +129,6 @@
             border-radius: 20px 20px 0 0;
             border: 4px solid #5D3A1A;
         }
-        .branch {
-            position: absolute;
-            background: #8B5A2B;
-            border-radius: 10px;
-            border: 4px solid #5D3A1A;
-        }
-        .branch-1 { width: 30%; height: 6%; top: 30%; left: -20%; transform: rotate(-35deg); }
-        .branch-2 { width: 35%; height: 6%; top: 20%; right: -25%; transform: rotate(40deg); }
-        .branch-3 { width: 25%; height: 5%; top: 10%; left: -12%; transform: rotate(-25deg); }
-        .branch-4 { width: 28%; height: 5%; top: 5%; right: -18%; transform: rotate(30deg); }
-        
         .canopy {
             position: absolute;
             top: -25%;
@@ -177,7 +166,7 @@
         }
         @keyframes glowPulse { 0% { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); } 100% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); } }
 
-        /* --- UI Panel --- */
+        /* ===== UI PANEL ===== */
         .ui-panel {
             position: absolute;
             top: 15px;
@@ -215,35 +204,23 @@
         .btn-roblox.adventure { background: #4169E1; box-shadow: 0 6px 0 #1E3A8A; }
         .btn-roblox.shop { background: #FF4500; box-shadow: 0 6px 0 #B22222; }
 
-        /* --- YOUR REQUESTED PLAYER CSS (FIXED) --- */
+        /* ===== PLAYER ===== */
         #player-wrapper {
             position: absolute;
             z-index: 10;
             transform: translate(-50%, -50%);
-            width: 90px;
-            aspect-ratio: 1;
             pointer-events: none;
+            width: clamp(60px, 10vmin, 120px);
+            height: auto;
         }
         #player-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            image-rendering: auto;
-            filter: drop-shadow(0 8px 12px rgba(0,0,0,.25));
+            width: 100%; height: auto; display: block;
+            filter: drop-shadow(0 10px 20px rgba(255,215,0,0.4));
+            animation: idleFloat 2.2s ease-in-out infinite;
         }
-        /* Animations applied via JS class */
-        #player-wrapper.bounce img {
-            animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes lemonBounce {
-            0% { transform: scale(1) rotate(0); }
-            25% { transform: scale(1.3) rotate(12deg) translateY(-15px); }
-            50% { transform: scale(0.8) rotate(-6deg) translateY(8px); }
-            75% { transform: scale(1.1) rotate(4deg) translateY(-6px); }
-            100% { transform: scale(1) rotate(0) translateY(0); }
-        }
-
-        /* --- Weapon Holder (Bow) --- */
+        #player-wrapper.bounce img { animation: none; animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        /* ===== BOW OF LEMON ===== */
         #player-wrapper .weapon-holder {
             position: absolute;
             display: none;
@@ -255,8 +232,22 @@
             transform: rotate(-45deg);
         }
         #player-wrapper .weapon-holder.active { display: block; }
+        
+        @keyframes idleFloat {
+            0% { transform: rotate(-3deg) scale(1); }
+            30% { transform: rotate(3deg) scale(1.04) translateY(-4px); }
+            60% { transform: rotate(-2deg) scale(0.96) translateY(2px); }
+            100% { transform: rotate(-3deg) scale(1); }
+        }
+        @keyframes lemonBounce {
+            0% { transform: scale(1) rotate(0); }
+            25% { transform: scale(1.3) rotate(12deg) translateY(-15px); }
+            50% { transform: scale(0.8) rotate(-6deg) translateY(8px); }
+            75% { transform: scale(1.1) rotate(4deg) translateY(-6px); }
+            100% { transform: scale(1) rotate(0) translateY(0); }
+        }
 
-        /* --- Joystick --- */
+        /* ===== JOYSTICK ===== */
         .joystick {
             position: absolute;
             bottom: 20px;
@@ -298,7 +289,7 @@
         .joystick .right { grid-column: 3; grid-row: 2; }
         .joystick .down { grid-column: 2; grid-row: 3; }
 
-        /* --- Adventure Mode Overlay --- */
+        /* ===== ADVENTURE OVERLAY ===== */
         #adventureOverlay {
             position: absolute;
             inset: 0;
@@ -363,7 +354,7 @@
         .attack-btn:active { transform: translateY(6px); box-shadow: 0 4px 0 #B22222; }
         .attack-btn:disabled { opacity: 0.5; transform: translateY(6px); pointer-events: none; }
 
-        /* --- Projectile --- */
+        /* ===== LEMON PROJECTILE ===== */
         .lemon-arrow {
             position: absolute;
             width: 30px;
@@ -376,7 +367,7 @@
             border: 2px solid #C17900;
         }
 
-        /* --- Shop Modal --- */
+        /* ===== SHOP ===== */
         #shopModal {
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.8); z-index: 200;
@@ -402,7 +393,7 @@
         }
         .shop-item button:disabled { opacity: 0.5; transform: translateY(4px); box-shadow: none; pointer-events: none; }
 
-        /* --- Responsive --- */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
             .menu-card { padding: 30px 20px; }
             .menu-card h1 { font-size: 2.5rem; }
@@ -422,7 +413,7 @@
     <div id="menu">
         <div class="menu-card">
             <h1>🍋 ADVENTURE OF LEMON</h1>
-            <p>Collect lemons. Buy the Lemon Bow. Shoot lemon arrows!</p>
+            <p>Collect lemons. Buy the Bow of Lemon. Shoot lemon arrows!</p>
             <button class="play-btn" onclick="startGame()">
                 <svg viewBox="0 0 140 90">
                     <rect x="10" y="10" width="120" height="70" rx="20" fill="#FDD835" stroke="#C17900" stroke-width="6"/>
@@ -438,10 +429,6 @@
 
         <div class="tree-container">
             <div class="trunk"></div>
-            <div class="branch branch-1"></div>
-            <div class="branch branch-2"></div>
-            <div class="branch branch-3"></div>
-            <div class="branch branch-4"></div>
             <div class="canopy" id="canopy">
                 <div class="leaf-cluster"></div><div class="leaf-cluster"></div><div class="leaf-cluster"></div>
                 <div class="leaf-cluster"></div><div class="leaf-cluster"></div>
@@ -457,10 +444,8 @@
             </div>
         </div>
 
-        <!-- PLAYER WRAPPER WITH YOUR REQUESTED CSS -->
         <div id="player-wrapper">
-            <img id="player" alt="Lemon Character">
-            <!-- Lemon Bow -->
+            <img id="player" alt="Lemon">
             <div class="weapon-holder" id="weaponHolder">
                 <svg viewBox="0 0 80 80">
                     <path d="M 10 40 Q 40 -10 70 40 Q 40 90 10 40 Z" fill="#FDD835" stroke="#C17900" stroke-width="4"/>
@@ -501,7 +486,7 @@
                         </svg>
                     </div>
                 </div>
-                <button class="attack-btn" id="attackBtn" onclick="attackWorm()">FIRE</button>
+                <button class="attack-btn" id="attackBtn" onclick="attackWorm()">SHOOT</button>
             </div>
         </div>
     </div>
@@ -511,7 +496,7 @@
         <div class="shop-content">
             <h2>🍋 LEMON SHOP</h2>
             <div class="shop-item">
-                <span>🏹 LEMON BOW</span>
+                <span>🏹 BOW OF LEMON</span>
                 <span class="cost">150 🍋</span>
                 <button id="buyWeaponBtn" onclick="buyWeapon()">BUY</button>
             </div>
@@ -521,7 +506,7 @@
 
     <script>
         // ============================================================
-        // 1. DRAW LEMON CHARACTER WITH CANVAS
+        // DRAW LEMON CHARACTER
         // ============================================================
         function generateLemonSprite() {
             const c = document.createElement('canvas');
@@ -544,9 +529,8 @@
             ctx.fillStyle = '#4CAF50'; ctx.fill();
             ctx.strokeStyle = '#2E7D32'; ctx.lineWidth = 2; ctx.stroke();
 
-            // Smiley Face
             ctx.strokeStyle = '#000000'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-            ctx.beginPath(); ctx.moveTo(95, 100); ctx.lineTo(95, 140); ctx.stroke(); 
+            ctx.beginPath(); ctx.moveTo(95, 100); ctx.lineTo(95, 140); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(161, 100); ctx.lineTo(161, 140); ctx.stroke();
             ctx.beginPath(); ctx.arc(128, 148, 32, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
 
@@ -558,7 +542,7 @@
         }
 
         // ============================================================
-        // 2. GAME ENGINE
+        // GAME ENGINE
         // ============================================================
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
@@ -623,12 +607,7 @@
         function move(dx, dy) {
             const nX = Math.min(Math.max(x+dx,10), window.innerWidth-10);
             const nY = Math.min(Math.max(y+dy,10), window.innerHeight-10);
-            if (nX!==x || nY!==y) { 
-                x=nX; y=nY; 
-                updatePosition(true); 
-                checkLemonCollection(); 
-                return true; 
-            }
+            if (nX!==x || nY!==y) { x=nX; y=nY; updatePosition(true); checkLemonCollection(); return true; }
             return false;
         }
         function updateScore() {
@@ -653,4 +632,22 @@
                 const l = lemonFruits[i];
                 const lr = l.getBoundingClientRect();
                 if (Math.hypot(cx-(lr.left+lr.width/2), cy-(lr.top+lr.height/2)) < 70) {
-                    l.remove(); lemonF
+                    l.remove(); lemonFruits.splice(i,1);
+                    score += 5; updateScore(); playCollect(); createLemon(); break;
+                }
+            }
+        }
+
+        function moveUp(){move(0,-STEP);} function moveDown(){move(0,STEP);}
+        function moveLeft(){move(-STEP,0);} function moveRight(){move(STEP,0);}
+        document.addEventListener('keydown', e=>{
+            if (!e.key.startsWith('Arrow')) return;
+            e.preventDefault();
+            switch(e.key){ case'ArrowUp':moveUp();break; case'ArrowDown':moveDown();break; case'ArrowLeft':moveLeft();break; case'ArrowRight':moveRight();break; }
+        });
+        document.querySelectorAll('.joystick button:not(.empty)').forEach(b=>{
+            const d = b.dataset.dir;
+            const s = e=>{
+                e.preventDefault(); b.classList.add('active');
+                switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; }
+                if(moveInterval)clearInterval(moveInterval);
