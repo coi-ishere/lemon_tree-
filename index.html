@@ -63,11 +63,20 @@
         #player-wrapper img { width: 100%; height: auto; display: block; filter: drop-shadow(0 10px 20px rgba(255,215,0,0.4)); animation: idleFloat 2.2s ease-in-out infinite; }
         #player-wrapper.bounce img { animation: none; animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        /* --- Parry Shield (Replaces Bow) --- */
+        /* --- Parry Shield --- */
         #player-wrapper .weapon-holder { position: absolute; display: none; z-index: 11; width: 80%; height: 80%; right: -45%; top: -15%; transform: rotate(-0deg); }
         #player-wrapper .weapon-holder.active { display: block; }
-        #player-wrapper .weapon-holder .shield-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); transition: all 0.1s; }
-        #player-wrapper .weapon-holder.parrying .shield-svg { filter: drop-shadow(0 0 40px #FFF) brightness(2); transform: scale(1.3); }
+        #player-wrapper .weapon-holder .shield-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); transition: transform 0.1s, filter 0.1s; }
+        
+        /* --- Parry Animation on Click --- */
+        #player-wrapper .weapon-holder.parrying .shield-svg { 
+            animation: parryFlash 0.2s ease-out forwards; 
+        }
+        @keyframes parryFlash {
+            0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 10px #FFF) brightness(1); }
+            50% { transform: scale(1.8) rotate(180deg); filter: drop-shadow(0 0 80px #FFD700) brightness(2); }
+            100% { transform: scale(1) rotate(360deg); filter: drop-shadow(0 0 20px #FFF) brightness(1.5); }
+        }
 
         @keyframes idleFloat { 0% { transform: rotate(-3deg) scale(1); } 30% { transform: rotate(3deg) scale(1.04) translateY(-4px); } 60% { transform: rotate(-2deg) scale(0.96) translateY(2px); } 100% { transform: rotate(-3deg) scale(1); } }
         @keyframes lemonBounce { 0% { transform: scale(1) rotate(0); } 25% { transform: scale(1.3) rotate(12deg) translateY(-15px); } 50% { transform: scale(0.8) rotate(-6deg) translateY(8px); } 75% { transform: scale(1.1) rotate(4deg) translateY(-6px); } 100% { transform: scale(1) rotate(0) translateY(0); } }
@@ -85,7 +94,7 @@
         
         .battle-arena { width: 90%; max-width: 800px; height: 80%; background: #8FBC8F; border-radius: 20px; border: 8px solid #222; position: relative; box-shadow: inset 0 -30px 0 #556B2F; overflow: hidden; }
 
-        /* Player HP Bar (Orange/Yellow/Red) */
+        /* Player HP Bar */
         .player-hp-container { position: absolute; bottom: 15px; left: 15px; width: 200px; background: #222; border-radius: 20px; padding: 4px; border: 3px solid #000; z-index: 10; }
         .player-hp-bar { height: 18px; width: 100%; border-radius: 15px; transition: width 0.2s; background: linear-gradient(90deg, #FF0000, #FF8C00, #FFD700); box-shadow: 0 0 10px rgba(255, 140, 0, 0.6); }
         .player-hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFF; font-weight: 900; font-size: 0.8rem; text-shadow: 0 0 4px #000; }
@@ -95,34 +104,53 @@
         .enemy-hp-bar { height: 20px; width: 100%; background: #FF0000; border-radius: 15px; transition: width 0.2s; }
         .enemy-hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFF; font-weight: 900; font-size: 0.9rem; text-shadow: 0 0 4px #000; }
 
-        /* Improved Worm */
+        /* --- IMPROVED FUNNY WORM --- */
         .worm-container { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.7)); }
-        .worm-segment { width: 70px; height: 45px; background: linear-gradient(180deg, #5C2E0B, #8B4513); border-radius: 40px; border: 3px solid #3D1A00; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.8), inset 5px 5px 10px rgba(255, 140, 0, 0.2); }
-        .worm-segment:nth-child(2) { width: 60px; height: 35px; margin-left: 5px; margin-top: -5px; }
-        .worm-segment:nth-child(3) { width: 50px; height: 25px; margin-left: 10px; margin-top: -5px; }
-        .worm-face { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .worm-segment { width: 70px; height: 40px; background: linear-gradient(180deg, #FFDAB9, #CD853F); border-radius: 40px; border: 3px solid #8B4513; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.4); transform: rotate(5deg); }
+        .worm-segment:nth-child(2) { width: 60px; height: 35px; margin-left: 10px; margin-top: -8px; transform: rotate(-5deg); }
+        .worm-segment:nth-child(3) { width: 50px; height: 25px; margin-left: 15px; margin-top: -8px; transform: rotate(5deg); }
+        
+        .worm-face { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); width: 100%; display: flex; flex-direction: column; align-items: center; }
         .worm-eyes { display: flex; gap: 15px; }
-        .worm-eyes span { width: 18px; height: 18px; background: #FF0000; border-radius: 50%; border: 2px solid #222; box-shadow: 0 0 15px #FF0000; position: relative; }
-        .worm-eyes span::after { content: ''; position: absolute; width: 6px; height: 6px; background: #FFF; border-radius: 50%; top: 2px; left: 2px; }
-        .worm-mouth { width: 40px; height: 15px; margin-top: 5px; background: #3D1A00; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; border: 2px solid #222; overflow: hidden; }
-        .worm-mouth::before { content: ''; position: absolute; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, transparent, transparent 4px, #FFF 4px, #FFF 6px); }
+        .worm-eyes span { width: 22px; height: 22px; background: #FFF; border-radius: 50%; border: 3px solid #222; position: relative; }
+        .worm-eyes span::after { content: ''; position: absolute; width: 12px; height: 12px; background: #000; border-radius: 50%; top: 2px; left: 2px; animation: googlyWorm 2s infinite alternate; }
+        .worm-eyes span:last-child::after { left: 5px; top: 5px; animation-duration: 2.5s; }
+        @keyframes googlyWorm { 0% { transform: translate(0, 0); } 100% { transform: translate(-5px, 5px); } }
 
-        /* Improved Spike Projectile */
-        .spike-projectile { position: absolute; width: 30px; height: 30px; pointer-events: none; z-index: 15; transform: rotate(45deg); }
-        .spike-projectile::before { content: ''; position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #888, #333); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: 0 0 15px rgba(0,0,0,0.8); }
-        .spike-projectile::after { content: ''; position: absolute; top: 45%; left: 45%; width: 20%; height: 20%; background: #FF4500; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: 0 0 10px #FF4500; }
+        /* Funny Hat */
+        .worm-hat { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 50px; height: 30px; background: #4B0082; border-radius: 2px 2px 0 0; border: 2px solid #222; z-index: 5; }
+        .worm-hat::before { content: ''; position: absolute; top: 30px; left: -10px; width: 70px; height: 5px; background: #4B0082; border-radius: 10px; border: 2px solid #222; }
+        .worm-hat::after { content: ''; position: absolute; top: -15px; left: 10px; width: 10px; height: 10px; background: #FFD700; border-radius: 50%; border: 2px solid #222; }
+
+        /* Funny Tongue */
+        .worm-mouth { width: 30px; height: 15px; margin-top: 5px; background: #5C2E0B; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; border: 2px solid #222; overflow: visible; }
+        .worm-mouth::before { content: ''; position: absolute; width: 15px; height: 15px; background: #FF69B4; border-radius: 50%; top: 10px; left: 10px; border: 2px solid #222; animation: tongueWag 0.5s infinite alternate; }
+        @keyframes tongueWag { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
+
+        /* --- IMPROVED FUNNY SPIKE (Cartoon Dart) --- */
+        .spike-projectile { position: absolute; width: 50px; height: 50px; pointer-events: none; z-index: 15; transform: rotate(-45deg); }
+        /* Dart Tail */
+        .spike-projectile::before { content: ''; position: absolute; top: 5px; left: 5px; width: 100%; height: 100%; background: #FF1493; clip-path: polygon(40% 0%, 60% 0%, 60% 20%, 40% 20%); box-shadow: 0 0 15px rgba(255, 20, 147, 0.8); }
+        /* Dart Head */
+        .spike-projectile::after { content: ''; position: absolute; top: 15px; left: 5px; width: 40px; height: 40px; background: #FFD700; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); box-shadow: inset 0 0 10px #FFA500; }
 
         /* Battle Player */
         .battle-player { position: absolute; bottom: 10%; left: 20%; width: clamp(60px, 8vmin, 100px); height: auto; z-index: 10; }
         .battle-player img { width: 100%; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
         .battle-player .weapon-holder { width: 100%; height: 100%; right: -80%; top: -10%; transform: rotate(-15deg); display: none; }
         .battle-player .weapon-holder.active { display: block; }
-        .battle-player .weapon-holder.parrying .shield-svg { filter: drop-shadow(0 0 40px #FFF) brightness(2) drop-shadow(0 0 20px #FFD700); transform: scale(1.3); }
+        .battle-player .weapon-holder.parrying .shield-svg { animation: parryFlash 0.2s ease-out forwards; }
 
         /* Parry Button */
-        .parry-btn { position: absolute; bottom: 5%; right: 10%; background: #8B4513; border: 6px solid #FFD700; border-radius: 20px; padding: 15px 30px; font-size: 1.8rem; font-weight: 900; color: #FFD700; box-shadow: 0 10px 0 #3D1A00; cursor: pointer; transition: 0.05s linear; text-shadow: 0 0 10px #FFD700; }
-        .parry-btn:active { transform: translateY(6px); box-shadow: 0 4px 0 #3D1A00; background: #FFD700; color: #8B4513; }
+        .parry-btn { position: absolute; bottom: 5%; right: 10%; background: #8B4513; border: 6px solid #FFD700; border-radius: 20px; padding: 15px 30px; font-size: 1.8rem; font-weight: 900; color: #FFD700; box-shadow: 0 10px 0 #3D1A00; cursor: pointer; transition: 0.05s linear, transform 0.1s; text-shadow: 0 0 10px #FFD700; }
+        .parry-btn:active { transform: translateY(6px) scale(0.9); box-shadow: 0 4px 0 #3D1A00; background: #FFD700; color: #8B4513; }
         .parry-btn:disabled { opacity: 0.5; transform: translateY(6px); box-shadow: 0 4px 0 #3D1A00; pointer-events: none; }
+
+        /* --- SPARKLE EFFECT (Success Parry) --- */
+        .sparkle-particle { position: absolute; width: 8px; height: 8px; background: #FFF; border-radius: 50%; pointer-events: none; z-index: 20; }
+        .sparkle-particle::before { content: ''; position: absolute; width: 100%; height: 100%; background: inherit; border-radius: inherit; filter: blur(2px); }
+        .sparkle-particle.yellow { background: #FFD700; }
+        .sparkle-particle.white { background: #FFFFFF; }
 
         /* --- Shop Modal --- */
         #shopModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
@@ -182,14 +210,8 @@
                     <circle cx="40" cy="40" r="30" fill="#C0C0C0" stroke="#888" stroke-width="6"/>
                     <circle cx="40" cy="40" r="22" fill="#FFD700" stroke="#B8860B" stroke-width="4"/>
                     <circle cx="40" cy="40" r="14" fill="#8B4513" stroke="#3D1A00" stroke-width="3"/>
-                    <!-- Parry Energy Core -->
                     <circle cx="40" cy="40" r="6" fill="#FFF" filter="url(#glow)"/>
-                    <defs>
-                        <filter id="glow">
-                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                    </defs>
+                    <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
                 </svg>
             </div>
         </div>
@@ -216,8 +238,9 @@
                     <div class="enemy-hp-text" id="wormHPText">HP: 50 / 50</div>
                 </div>
                 
-                <!-- Improved Worm -->
+                <!-- Funny Improved Worm -->
                 <div class="worm-container" id="wormContainer">
+                    <div class="worm-hat"></div>
                     <div class="worm-face">
                         <div class="worm-eyes"><span></span><span></span></div>
                         <div class="worm-mouth"></div>
@@ -279,11 +302,10 @@
         
         // ULTRAKILL PARRY SOUND EFFECT
         function playParrySound() {
-            // The classic "Clang" of Parry
             playTone(1200, 0.05, 'square', 0.4);
             setTimeout(() => playTone(800, 0.08, 'sine', 0.3), 20);
             setTimeout(() => playTone(1600, 0.1, 'sawtooth', 0.25), 40);
-            // Add a metallic noise burst
+            // Metallic noise burst
             if (!audioCtx) return;
             try {
                 const bufferSize = audioCtx.sampleRate * 0.1;
@@ -355,7 +377,6 @@
         let spikeElement = null;
         let spikeSpeed = 8;
         let spikeDX = 0, spikeDY = 0;
-        let spikeSX = 0, spikeSY = 0; // Start position
         let wormAttackTimer = 0;
         let isParrying = false;
         let isSpikeDeflected = false;
@@ -427,6 +448,14 @@
         function closeShop(){ shopModal.classList.remove('active'); }
         function buyWeapon(){ if(score>=150 && !weaponOwned){ score-=150; updateScore(); weaponOwned=true; localStorage.setItem('weaponOwned','true'); buyWeaponBtn.disabled=true; buyWeaponBtn.textContent='OWNED'; playBuy(); closeShop(); } }
 
+        // ---- AABB COLLISION HELPER (Touch Hitbox) ----
+        function rectIntersect(r1, r2) {
+            return !(r2.left > r1.right || 
+                     r2.right < r1.left || 
+                     r2.top > r1.bottom ||
+                     r2.bottom < r1.top);
+        }
+
         // ---- ADVENTURE ENGINE ----
         let arenaLoopId = null;
 
@@ -441,7 +470,7 @@
             
             // Worm shoots spike every 2-3 seconds
             wormAttackTimer++;
-            if (wormAttackTimer >= 90 && !isSpikeActive && wormHP > 0) { // 1.5 seconds at 60fps
+            if (wormAttackTimer >= 100 && !isSpikeActive && wormHP > 0) {
                 wormAttackTimer = 0;
                 shootSpike();
             }
@@ -449,7 +478,6 @@
             // Move Spike Logic
             if (isSpikeActive && spikeElement) {
                 const rect = spikeElement.getBoundingClientRect();
-                // Calculate movement
                 let currentX = rect.left;
                 let currentY = rect.top;
                 
@@ -458,7 +486,6 @@
 
                 // If parried, deflect to worm
                 if (isSpikeDeflected) {
-                    // Calculate vector back to worm center
                     const wormRect = document.getElementById('wormContainer').getBoundingClientRect();
                     const wormCX = wormRect.left + wormRect.width/2;
                     const wormCY = wormRect.top + wormRect.height/2;
@@ -467,48 +494,42 @@
                     const dy = wormCY - currentY;
                     const hyp = Math.hypot(dx, dy);
                     if (hyp > 0) {
-                        directionX = (dx / hyp) * 10; // Speed back
-                        directionY = (dy / hyp) * 10;
+                        directionX = (dx / hyp) * 14; // Speed back
+                        directionY = (dy / hyp) * 14;
                     }
                 }
 
                 // Apply movement
                 const newX = currentX + directionX;
                 const newY = currentY + directionY;
-                spikeElement.style.left = (newX - 15) + 'px';
-                spikeElement.style.top = (newY - 15) + 'px';
+                spikeElement.style.left = (newX - 25) + 'px';
+                spikeElement.style.top = (newY - 25) + 'px';
 
-                // Collision Checks
-                const spikeCenterX = newX;
-                const spikeCenterY = newY;
+                // **REWORDED HITBOX USING AABB TOUCH LOGIC**
+                const spikeRect = spikeElement.getBoundingClientRect();
 
-                // 1. Spike hits Player (Take Damage)
+                // 1. Spike touches Player
                 if (!isSpikeDeflected) {
                     const pRect = document.querySelector('.battle-player').getBoundingClientRect();
-                    const pCX = pRect.left + pRect.width/2;
-                    const pCY = pRect.top + pRect.height/2;
                     
-                    if (Math.hypot(spikeCenterX - pCX, spikeCenterY - pCY) < 60) {
-                        // Player hit!
+                    if (rectIntersect(spikeRect, pRect)) {
                         playerHP -= 5;
                         updatePlayerHPUI();
                         playWormHit();
                         resetSpike();
                         
                         if (playerHP <= 0) {
-                            alert("GAME OVER! You were impaled.");
+                            alert("GAME OVER! The dart got you.");
                             closeAdventure();
-                            playerHP = playerMaxHP; // Reset for next time
+                            playerHP = playerMaxHP;
                             updatePlayerHPUI();
                         }
                     }
                 } else {
-                    // 2. Deflected Spike hits Worm
+                    // 2. Deflected Spike touches Worm
                     const wRect = document.getElementById('wormContainer').getBoundingClientRect();
-                    const wCX = wRect.left + wRect.width/2;
-                    const wCY = wRect.top + wRect.height/2;
                     
-                    if (Math.hypot(spikeCenterX - wCX, spikeCenterY - wCY) < 80) {
+                    if (rectIntersect(spikeRect, wRect)) {
                         wormHP -= 5;
                         updateWormUI();
                         playWormHit();
@@ -572,6 +593,36 @@
             isSpikeDeflected = false;
         }
 
+        // ===== SPARKLE GENERATOR =====
+        function createSparkles(x, y) {
+            const arena = document.getElementById('battleArena');
+            const colors = ['#FFD700', '#FFF', '#FFA500', '#FFFF00'];
+            for (let i = 0; i < 20; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle-particle ' + (colors[Math.floor(Math.random() * colors.length)]);
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 100;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                sparkle.style.left = (x - 4) + 'px';
+                sparkle.style.top = (y - 4) + 'px';
+                sparkle.style.setProperty('--tx', tx + 'px');
+                sparkle.style.setProperty('--ty', ty + 'px');
+                sparkle.style.animation = `sparkleBurst 0.6s ease-out forwards`;
+                sparkle.style.transform = `scale(${0.5 + Math.random()})`;
+                
+                // Dynamic keyframe injection
+                const keyframes = `@keyframes sparkleBurst { 0% { transform: translate(0,0) scale(1); opacity:1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity:0; } }`;
+                const styleSheet = document.createElement("style");
+                styleSheet.textContent = keyframes;
+                document.head.appendChild(styleSheet);
+
+                arena.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 700);
+            }
+        }
+
         function activateParry() {
             if (!isSpikeActive || isParrying) return;
             isParrying = true;
@@ -589,15 +640,16 @@
             const sCX = sRect.left + sRect.width/2;
             const sCY = sRect.top + sRect.height/2;
 
-            // Increased hitbox to 180px for easier parry
-            if (Math.hypot(pCX - sCX, pCY - sCY) < 180) {
+            // Increased hitbox to 200px for easier parry
+            if (Math.hypot(pCX - sCX, pCY - sCY) < 200) {
                 // ULTRAKILL SUCCESSFUL PARRY!
                 playParrySound();
+                // TRIGGER SPARKLES at the center of the player
+                createSparkles(pCX, pCY);
+                
                 isSpikeDeflected = true;
-                // Modify speed to be faster back to worm
                 spikeSpeed = 14;
                 
-                // Visual Feedback - Flash
                 setTimeout(() => {
                     battleWeaponHolder.classList.remove('parrying');
                     weaponHolder.classList.remove('parrying');
@@ -605,7 +657,6 @@
                     parryBtn.disabled = false;
                 }, 300);
             } else {
-                // Parry failed (whiff)
                 setTimeout(() => {
                     battleWeaponHolder.classList.remove('parrying');
                     weaponHolder.classList.remove('parrying');
@@ -637,7 +688,6 @@
             parryBtn.disabled = false;
             isSpikeActive = false;
             isParrying = false;
-            // Replace default attack with parry
             startAdventureLoop();
         });
 
