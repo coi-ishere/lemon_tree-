@@ -62,7 +62,7 @@
         #player-wrapper img { width: 100%; height: auto; display: block; filter: drop-shadow(0 10px 20px rgba(255,215,0,0.4)); animation: idleFloat 2.2s ease-in-out infinite; }
         #player-wrapper.bounce img { animation: none; animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* ===== SHIELD & LONGER SWING ===== */
+        /* ===== SHIELD & SWING ===== */
         #player-wrapper .weapon-holder { position: absolute; display: none; z-index: 11; width: 80%; height: 80%; right: -45%; top: -15%; }
         #player-wrapper .weapon-holder.active { display: block; }
         #player-wrapper .weapon-holder .shield-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); transition: transform 0.15s, filter 0.15s; }
@@ -106,7 +106,7 @@
         .enemy-hp-bar { height: 20px; width: 100%; background: #FF0000; border-radius: 30px; transition: width 0.2s; box-shadow: inset 0 0 10px rgba(255,0,0,0.5); }
         .enemy-hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFF; font-weight: 900; font-size: 0.9rem; text-shadow: 0 0 4px #000; }
 
-        /* ===== CUTE WORM (no ugly stuff) ===== */
+        /* ===== CUTE WORM ===== */
         .worm-container { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); z-index: 5; width: 160px; }
         .worm-segment { width: 100%; height: 45px; background: linear-gradient(180deg, #7CFC00, #32CD32); border-radius: 40px; border: 3px solid #228B22; box-shadow: inset -10px -10px 15px rgba(0,0,0,0.2), inset 10px 10px 15px rgba(255,255,255,0.3); transform: rotate(3deg); }
         .worm-segment:nth-child(2) { width: 80%; margin-left: 10px; margin-top: -12px; transform: rotate(-3deg); }
@@ -124,7 +124,7 @@
         .worm-mouth::before { content: ''; position: absolute; width: 18px; height: 18px; background: #FF69B4; border-radius: 50%; top: 8px; left: 8px; border: 2px solid #222; animation: tongue 0.4s infinite alternate; }
         @keyframes tongue { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
 
-        /* ===== SPIKE PROJECTILE (slower & reliable) ===== */
+        /* ===== SPIKE PROJECTILE ===== */
         .spike-projectile { position: absolute; width: 35px; height: 35px; pointer-events: none; z-index: 15; animation: spinSpike 0.5s linear infinite; }
         @keyframes spinSpike { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .spike-projectile::before { content: ''; position: absolute; top: 2px; left: 2px; width: 100%; height: 100%; background: #FF4500; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: 0 0 20px rgba(255,69,0,0.8); }
@@ -362,7 +362,7 @@
         let wormMaxHP=50, wormHP=50;
         let playerMaxHP=67, playerHP=67;
         let isSpikeActive=false, spikeElement=null;
-        let spikeSpeed=3.5; // slower
+        let spikeSpeed=5; // faster but still manageable
         let spikeDX=0, spikeDY=0;
         let wormAttackTimer=0;
         let isParrying=false, isSpikeDeflected=false;
@@ -439,7 +439,7 @@
             return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
         }
 
-        // ADVENTURE LOOP - REWRITTEN FOR RELIABILITY
+        // ADVENTURE LOOP - FIXED SPIKE SHOOTING
         function startAdventureLoop() {
             if (arenaLoopId) cancelAnimationFrame(arenaLoopId);
             wormAttackTimer=0;
@@ -447,12 +447,16 @@
         }
         function arenaLoop() {
             if (!adventureOverlay.classList.contains('active')) return;
+            
+            // Increase timer every frame
             wormAttackTimer++;
-            // Shoot every ~1.8 seconds (110 frames at 60fps)
-            if (wormAttackTimer >= 110 && !isSpikeActive && wormHP > 0) {
+            
+            // Shoot spike every 3 seconds (180 frames at 60fps)
+            if (wormAttackTimer >= 180 && !isSpikeActive && wormHP > 0) {
                 wormAttackTimer = 0;
                 shootSpike();
             }
+            
             if (isSpikeActive && spikeElement) {
                 const rect = spikeElement.getBoundingClientRect();
                 let curX = rect.left, curY = rect.top;
@@ -491,25 +495,32 @@
 
         function shootSpike() {
             if (isSpikeActive || wormHP <= 0) return;
-            console.log("Shooting spike"); // Debug
+            console.log("Spike fired!"); // Debug confirmation in console (F12)
+            
             const wRect = document.getElementById('wormContainer').getBoundingClientRect();
             const pRect = document.querySelector('.battle-player').getBoundingClientRect();
             const arenaRect = battleArena.getBoundingClientRect();
-            // Start from worm's right side
+            
+            // Spawn spike from the worm's position
             const startX = wRect.right - arenaRect.left - 20;
             const startY = wRect.top - arenaRect.top + 20;
+            
             spikeElement = document.createElement('div');
             spikeElement.className = 'spike-projectile';
             spikeElement.style.left = startX + 'px';
             spikeElement.style.top = startY + 'px';
             battleArena.appendChild(spikeElement);
-            // Aim at player's center
+            
+            // Aim directly at the player's center
             const targetX = pRect.left + pRect.width/2;
             const targetY = pRect.top + pRect.height/2;
             const dx = targetX - (wRect.right);
             const dy = targetY - (wRect.top + 20);
             const hyp = Math.hypot(dx, dy);
-            if (hyp > 0) { spikeDX = (dx/hyp)*spikeSpeed; spikeDY = (dy/hyp)*spikeSpeed; }
+            if (hyp > 0) {
+                spikeDX = (dx/hyp) * spikeSpeed;
+                spikeDY = (dy/hyp) * spikeSpeed;
+            }
             isSpikeActive = true;
             isSpikeDeflected = false;
         }
@@ -518,7 +529,7 @@
             if (spikeElement) { spikeElement.remove(); spikeElement = null; }
             isSpikeActive = false;
             isSpikeDeflected = false;
-            wormAttackTimer = 90; // short delay before next shot
+            wormAttackTimer = 160; // short delay before next shot (about 2.6 seconds)
         }
 
         // SPARKLES
@@ -600,4 +611,4 @@
         window.addEventListener('load', ()=>{ spawnLemons(20); });
     </script>
 </body>
-</html>
+                    </html>
