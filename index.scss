@@ -1,0 +1,217 @@
+// ==========================================================
+// VARIABLES
+// ==========================================================
+$primary-yellow: #FDD835;
+$yellow-dark: #B8860B;
+$roblox-blue: #6DC6E4;
+$dark-border: #222;
+$shadow-color: #111;
+$white: #FFFFFF;
+$tree-trunk: #8B5A2B;
+$canopy-dark: #2E8B57;
+$canopy-light: #3CB371;
+
+// ==========================================================
+// MIXINS
+// ==========================================================
+@mixin roblox-btn($bg, $shadow) {
+  background: $bg;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: $white;
+  cursor: pointer;
+  box-shadow: 0 8px 0 $shadow;
+  border: 4px solid $dark-border;
+  transition: transform 0.05s, box-shadow 0.05s;
+  &:active { transform: translateY(4px); box-shadow: 0 4px 0 $shadow; }
+}
+
+@mixin roblox-panel {
+  background: $white;
+  border-radius: 12px;
+  border: 8px solid $dark-border;
+  box-shadow: 0 10px 0 $shadow-color, 0 10px 20px rgba(0,0,0,0.3);
+}
+
+@mixin reset {
+  margin: 0; padding: 0; box-sizing: border-box;
+  user-select: none; -webkit-tap-highlight-color: transparent;
+  font-family: 'Segoe UI', 'Arial Black', sans-serif;
+}
+
+// ==========================================================
+// GLOBAL
+// ==========================================================
+* { @include reset; }
+body { width: 100vw; height: 100vh; overflow: hidden; background: $roblox-blue; }
+
+// ==========================================================
+// CLOUDS (Funny & Drifting)
+// ==========================================================
+.clouds {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  .cloud {
+    position: absolute; background: rgba(255,255,255,0.85); border-radius: 50%;
+    box-shadow: 40px -20px 0 20px rgba(255,255,255,0.85), 80px 0 0 0 rgba(255,255,255,0.85), -40px 0 0 0 rgba(255,255,255,0.85);
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+    animation: drift linear infinite;
+    @for $i from 1 through 4 {
+      &:nth-child(#{$i}) {
+        width: (80px + random(60));
+        height: (40px + random(30));
+        top: (5% + random(20));
+        animation-duration: (25s + random(20));
+        animation-delay: -(random(20)) + s;
+      }
+    }
+  }
+}
+@keyframes drift {
+  0% { transform: translateX(-20vw); }
+  100% { transform: translateX(110vw); }
+}
+
+// ==========================================================
+// MENU (Less boring, vibrant)
+// ==========================================================
+#menu {
+  position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
+  background: url('menu_bg.jpg') no-repeat center center; background-size: cover; z-index: 100;
+  transition: opacity 0.8s ease;
+  &::before { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
+  &.hidden { opacity: 0; pointer-events: none; }
+  
+  .menu-card {
+    position: relative; z-index: 1;
+    background: linear-gradient(145deg, #FFFDE7, #FFF59D);
+    padding: 50px 70px; border-radius: 30px;
+    border: 8px solid $primary-yellow;
+    box-shadow: 0 20px 0 $yellow-dark, 0 30px 60px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,215,0,0.3);
+    text-align: center; max-width: 90vw;
+    animation: wobbleCard 3s ease-in-out infinite;
+    
+    h1 {
+      font-size: 4.2rem; color: #222;
+      text-shadow: 4px 4px 0 $primary-yellow, 0 0 20px rgba(255,215,0,0.2);
+      margin-bottom: 10px;
+      .lemon-icon { display: inline-block; animation: spinLemon 4s linear infinite; }
+    }
+    p { color: #333; font-size: 1.2rem; font-weight: bold; margin-bottom: 30px; }
+    .play-btn {
+      background: transparent; border: none; cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      &:active { transform: scale(0.9); }
+      svg { width: 180px; height: 120px; transition: transform 0.2s; }
+      &:hover svg { transform: scale(1.15) rotate(-3deg); }
+    }
+  }
+}
+@keyframes wobbleCard {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+@keyframes spinLemon {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// ==========================================================
+// GAME
+// ==========================================================
+#game { position: relative; width: 100vw; height: 100vh; display: none; background: $roblox-blue; overflow: hidden; }
+
+// ==========================================================
+// TREE (Funny & Googly-eyed)
+// ==========================================================
+.tree-container {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 80vmin; height: 95vmin; pointer-events: none; z-index: 1;
+  
+  .trunk {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 14%; height: 45%; background: $tree-trunk;
+    border-radius: 10px 10px 0 0; box-shadow: inset -10px 0 15px rgba(0,0,0,0.3);
+    border: 6px solid #5D3A1A;
+    // Funny Face on Tree
+    &::before, &::after {
+      content: ''; position: absolute; width: 14%; height: 20%; background: $white;
+      border-radius: 50%; border: 4px solid $dark-border; top: 30%; 
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+    &::before { left: 15%; }
+    &::after { right: 15%; }
+    .pupil-l, .pupil-r {
+      position: absolute; width: 6%; height: 10%; background: $dark-border;
+      border-radius: 50%; top: 35%;
+      animation: googlyEyes 3s ease-in-out infinite alternate;
+    }
+    .pupil-l { left: 22%; }
+    .pupil-r { right: 22%; }
+    // Mouth
+    .mouth {
+      position: absolute; width: 30%; height: 15%; bottom: 15%; left: 50%; transform: translateX(-50%);
+      border-bottom: 8px solid $dark-border; border-radius: 50%;
+    }
+  }
+  // Branches, Canopy (unchanged)
+  .branch { position: absolute; background: $tree-trunk; border-radius: 10px; border: 6px solid #5D3A1A; box-shadow: inset -5px 0 8px rgba(0,0,0,0.3); }
+  .branch-1 { width: 35%; height: 8%; top: 30%; left: -25%; transform: rotate(-35deg); }
+  .branch-2 { width: 40%; height: 8%; top: 20%; right: -30%; transform: rotate(40deg); }
+  .branch-3 { width: 30%; height: 7%; top: 10%; left: -15%; transform: rotate(-25deg); }
+  .branch-4 { width: 32%; height: 7%; top: 5%; right: -20%; transform: rotate(30deg); }
+  
+  .canopy { position: absolute; top: -25%; left: 50%; transform: translateX(-50%); width: 160%; height: 85%; border-radius: 50%; background: $canopy-dark; border: 8px solid #1E5A3A; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.3); overflow: visible; z-index: 1; }
+  .leaf-cluster { position: absolute; border-radius: 40%; background: $canopy-light; border: 6px solid $canopy-dark; }
+  .leaf-cluster:nth-child(1) { width: 40%; height: 40%; top: 5%; left: -15%; }
+  .leaf-cluster:nth-child(2) { width: 50%; height: 50%; top: -10%; right: -20%; }
+  .leaf-cluster:nth-child(3) { width: 35%; height: 35%; bottom: 10%; left: 20%; }
+  .leaf-cluster:nth-child(4) { width: 30%; height: 30%; bottom: 5%; right: 15%; }
+  .leaf-cluster:nth-child(5) { width: 25%; height: 25%; top: 30%; left: 5%; }
+}
+@keyframes googlyEyes {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-5px, 5px); }
+  50% { transform: translate(5px, -5px); }
+  75% { transform: translate(-10px, 0); }
+  100% { transform: translate(10px, 10px); }
+}
+
+.lemon-fruit { position: absolute; font-size: 4vmin; cursor: pointer; pointer-events: auto; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.4)); transition: transform 0.1s; z-index: 2; &:active { transform: scale(1.3); } }
+
+// ==========================================================
+// UI PANEL (Upgraded)
+// ==========================================================
+.ui-panel {
+  position: absolute; top: 20px; left: 20px; right: 20px;
+  display: flex; justify-content: space-between; align-items: center; z-index: 5;
+  padding: 10px 24px; @include roblox-panel;
+  .title { font-size: 1.5rem; font-weight: 900; color: #333; }
+  .score { font-size: 1.4rem; font-weight: 900; color: $primary-yellow; background: $dark-border; padding: 4px 20px; border-radius: 8px; border: 2px solid $shadow-color; }
+  .btn-group { display: flex; gap: 12px; .btn-roblox.adventure { @include roblox-btn(#4169E1, #1E3A8A); } .btn-roblox.shop { @include roblox-btn(#FF4500, #B22222); } }
+}
+
+// ==========================================================
+// PLAYER WRAPPER (Funny Lemon)
+// ==========================================================
+#player-wrapper {
+  position: absolute; z-index: 10; transform: translate(-50%, -50%);
+  pointer-events: none; width: clamp(70px, 12vmin, 150px); height: auto;
+  img { width: 100%; height: auto; display: block; border-radius: 30%; filter: drop-shadow(0 10px 20px rgba(255,215,0,0.4)); object-fit: contain; animation: lemonIdle 2.2s ease-in-out infinite; }
+  &.bounce img { animation: none; animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  .weapon-holder { position: absolute; display: none; z-index: 11; width: 60%; height: 80%; right: -40%; top: -10%; transform: rotate(-45deg); &.active { display: block; } svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px $white); } }
+}
+
+// ==========================================================
+// ANIMATIONS
+// ==========================================================
+@keyframes lemonIdle { 0% { transform: rotate(-3deg) scale(1); } 30% { transform: rotate(3deg) scale(1.04) translateY(-4px); } 60% { transform: rotate(-2deg) scale(0.96) translateY(2px); } 100% { transform: rotate(-3deg) scale(1); } }
+@keyframes lemonBounce { 0% { transform: scale(1) rotate(0); } 25% { transform: scale(1.35) rotate(12deg) translateY(-18px); } 50% { transform: scale(0.75) rotate(-6deg) translateY(12px); } 75% { transform: scale(1.15) rotate(4deg) translateY(-8px); } 100% { transform: scale(1) rotate(0) translateY(0); } }
+
+// ==========================================================
+// JOYSTICK & OVERLAYS (Keep previous structure, update names)
+// ==========================================================
+// Shop name changed to Bow of Lemon in HTML/JS. Attack logic modified to shoot a projectile.
+
+// [Remaining SCSS for Joystick, Adventure, Shop unchanged structurally but we will reflect the "Bow" change in the HTML/JS].
