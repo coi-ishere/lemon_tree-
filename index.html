@@ -106,14 +106,15 @@
             overflow: hidden;
         }
 
-        /* --- Lemon Tree (Detailed, Smaller on PC, NO EYES) --- */
+        /* --- Lemon Tree (NEW SIZE FOR PC) --- */
         .tree-container {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: min(65vmin, 500px);
-            height: min(85vmin, 650px);
+            /* Đã sửa kích thước để hiển thị tốt trên PC */
+            width: min(65vmin, 550px);
+            height: min(85vmin, 700px);
             pointer-events: none;
             z-index: 1;
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
@@ -396,7 +397,10 @@
         }
         .shop-item button:disabled { opacity: 0.5; transform: translateY(4px); box-shadow: none; pointer-events: none; }
 
-        /* --- Responsive Adjustments --- */
+        /* --- Responsive Adjustments (Mobile Only) --- */
+        @media (max-width: 800px) {
+            .tree-container { width: 80vmin; height: 90vmin; }
+        }
         @media (max-width: 600px) {
             .menu-card { padding: 30px 20px; }
             .menu-card h1 { font-size: 2.5rem; }
@@ -405,7 +409,6 @@
             .joystick button { font-size: 1.6rem; }
             .ui-panel .title { font-size: 1rem; }
             .ui-panel .btn-group .btn-roblox { padding: 4px 10px; font-size: 0.8rem; }
-            .tree-container { width: 80vmin; height: 90vmin; }
             .attack-btn { font-size: 1.2rem; padding: 10px 20px; }
         }
     </style>
@@ -451,15 +454,11 @@
 
         <div id="player-wrapper">
             <img id="player" alt="Lemon Character">
-            <!-- Lemon Bow Weapon -->
             <div class="weapon-holder" id="weaponHolder">
                 <svg viewBox="0 0 80 80">
-                    <!-- Bow body shaped like a curved lemon -->
                     <path d="M 10 40 Q 40 -10 70 40 Q 40 90 10 40 Z" fill="#FDD835" stroke="#C17900" stroke-width="4"/>
                     <path d="M 10 40 Q 40 10 70 40" fill="none" stroke="#FDD835" stroke-width="6"/>
-                    <!-- Bowstring -->
                     <line x1="15" y1="40" x2="65" y2="40" stroke="#FFF" stroke-width="3"/>
-                    <!-- Lemon arrow nocked -->
                     <circle cx="65" cy="40" r="8" fill="#FDD835" stroke="#C17900" stroke-width="2"/>
                 </svg>
             </div>
@@ -644,106 +643,4 @@
         function checkLemonCollection() {
             const r = playerWrapper.getBoundingClientRect();
             const cx = r.left + r.width/2, cy = r.top + r.height/2;
-            for (let i=lemonFruits.length-1;i>=0;i--) {
-                const l = lemonFruits[i];
-                const lr = l.getBoundingClientRect();
-                if (Math.hypot(cx-(lr.left+lr.width/2), cy-(lr.top+lr.height/2)) < 70) {
-                    l.remove(); lemonFruits.splice(i,1);
-                    score += 5; updateScore(); playCollect(); createLemon(); break;
-                }
-            }
-        }
-
-        // Controls (Keyboard + Joystick)
-        function moveUp(){move(0,-STEP);} function moveDown(){move(0,STEP);}
-        function moveLeft(){move(-STEP,0);} function moveRight(){move(STEP,0);}
-        document.addEventListener('keydown', e=>{
-            if (!e.key.startsWith('Arrow')) return;
-            e.preventDefault();
-            switch(e.key){ case'ArrowUp':moveUp();break; case'ArrowDown':moveDown();break; case'ArrowLeft':moveLeft();break; case'ArrowRight':moveRight();break; }
-        });
-        document.querySelectorAll('.joystick button:not(.empty)').forEach(b=>{
-            const d = b.dataset.dir;
-            const s = e=>{
-                e.preventDefault(); b.classList.add('active');
-                switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; }
-                if(moveInterval)clearInterval(moveInterval);
-                moveInterval=setInterval(()=>{ switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; } },70);
-            };
-            const st = e=>{ e.preventDefault(); b.classList.remove('active'); if(moveInterval){clearInterval(moveInterval);moveInterval=null;} };
-            b.addEventListener('mousedown',s); b.addEventListener('mouseup',st); b.addEventListener('mouseleave',st);
-            b.addEventListener('touchstart',s,{passive:false}); b.addEventListener('touchend',st,{passive:false});
-        });
-        window.addEventListener('resize', ()=>{
-            const mx = window.innerWidth-10, my = window.innerHeight-10;
-            if(x>mx)x=mx; if(y>my)y=my; updatePosition(false);
-        });
-
-        // Shop & Adventure Logic
-        shopBtn.addEventListener('click', ()=>{ shopModal.classList.add('active'); });
-        function closeShop(){ shopModal.classList.remove('active'); }
-        function buyWeapon(){
-            if(score>=150 && !weaponOwned) {
-                score-=150; updateScore(); weaponOwned=true;
-                localStorage.setItem('weaponOwned','true');
-                buyWeaponBtn.disabled=true; buyWeaponBtn.textContent='OWNED';
-                playBuy(); closeShop();
-            }
-        }
-        adventureBtn.addEventListener('click', ()=>{
-            if(!weaponOwned){ alert('You need to buy the Lemon Bow in the Shop first!'); return; }
-            initAudio();
-            adventureOverlay.classList.add('active');
-            wormHP = wormMaxHP; updateWormUI();
-            battleWeaponHolder.classList.add('active'); weaponHolder.classList.add('active');
-            attackBtn.disabled = false;
-        });
-        function closeAdventure(){ adventureOverlay.classList.remove('active'); battleWeaponHolder.classList.remove('active'); }
-        function updateWormUI(){ let p=(wormHP/wormMaxHP)*100; wormHPBar.style.width=p+'%'; wormHPText.textContent='HP: '+wormHP+' / '+wormMaxHP; }
-
-        // Shooting Mechanism
-        function attackWorm(){
-            if(isAttacking || wormHP<=0) return;
-            isAttacking = true; attackBtn.disabled = true;
-            playShoot();
-
-            const bw = document.querySelector('.battle-player .weapon-holder');
-            bw.style.transform = 'rotate(-10deg) translateX(10px)';
-            setTimeout(()=>bw.style.transform = 'rotate(-30deg)',100);
-
-            const ar = document.getElementById('battleArena');
-            const pr = document.querySelector('.battle-player').getBoundingClientRect();
-            const wr = document.querySelector('.worm').getBoundingClientRect();
-            const arenaRect = ar.getBoundingClientRect();
-            const sx = pr.right - arenaRect.left - 20;
-            const sy = pr.top - arenaRect.top + pr.height/2;
-            const ex = wr.left - arenaRect.left;
-            const ey = wr.top - arenaRect.top + wr.height/2;
-
-            const p = document.createElement('div');
-            p.className = 'lemon-arrow';
-            p.style.left = sx+'px'; p.style.top = sy+'px';
-            ar.appendChild(p);
-
-            const duration = 400, st = performance.now();
-            function animate(t){
-                const e = t - st, prog = Math.min(e/duration, 1);
-                p.style.left = (sx + (ex-sx)*prog)+'px';
-                p.style.top = (sy + (ey-sy)*prog)+'px';
-                if(prog<1) requestAnimationFrame(animate);
-                else {
-                    p.remove(); bw.style.transform = 'rotate(-30deg)';
-                    wormHP -= 5; if(wormHP<0) wormHP=0; updateWormUI(); playCollect();
-                    if(wormHP<=0) setTimeout(()=>{ score+=25; updateScore(); wormHP=wormMaxHP; updateWormUI(); isAttacking=false; attackBtn.disabled=false; },500);
-                    else setTimeout(()=>{ isAttacking=false; attackBtn.disabled=false; },400);
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-
-        // Initial State
-        menu.style.display='flex'; game.style.display='none';
-        window.addEventListener('load', ()=>{ spawnLemons(20); });
-    </script>
-</body>
-</html>
+            for (let i=lemonF
