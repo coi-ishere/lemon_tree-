@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Adventure of Lemon</title>
     <style>
-        /* --- Reset & Base Setup --- */
+        /* --- Reset --- */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +21,7 @@
             background: #6DC6E4;
         }
 
-        /* --- Moving Clouds --- */
+        /* --- Clouds --- */
         .clouds {
             position: absolute;
             inset: 0;
@@ -85,7 +85,7 @@
             margin-bottom: 10px;
         }
         .menu-card p { color: #333; font-size: 1.2rem; font-weight: bold; margin-bottom: 30px; }
-
+        
         .play-btn {
             background: transparent;
             border: none;
@@ -98,28 +98,25 @@
 
         /* --- Game Container --- */
         #game {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+            position: fixed; /* Dùng fixed để đảm bảo lấp đầy màn hình trên PC */
+            inset: 0;
             display: none;
             background: #6DC6E4;
             overflow: hidden;
         }
 
-        /* --- Lemon Tree (NEW SIZE FOR PC) --- */
+        /* --- Lemon Tree --- */
         .tree-container {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            /* Đã sửa kích thước để hiển thị tốt trên PC */
             width: min(65vmin, 550px);
             height: min(85vmin, 700px);
             pointer-events: none;
             z-index: 1;
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
         }
-        /* Trunk */
         .trunk {
             position: absolute;
             bottom: 0;
@@ -131,7 +128,6 @@
             border-radius: 20px 20px 0 0;
             border: 4px solid #5D3A1A;
         }
-        /* Tree Canopy */
         .canopy {
             position: absolute;
             top: -25%;
@@ -157,7 +153,6 @@
         .leaf-cluster:nth-child(4) { width: 30%; height: 30%; bottom: 5%; right: 15%; }
         .leaf-cluster:nth-child(5) { width: 25%; height: 25%; top: 30%; left: 5%; }
 
-        /* Collectible Lemons on Tree */
         .lemon-fruit {
             position: absolute;
             font-size: 3.5vmin;
@@ -170,7 +165,7 @@
         }
         @keyframes glowPulse { 0% { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); } 100% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); } }
 
-        /* --- UI Panel (Responsive) --- */
+        /* --- UI Panel --- */
         .ui-panel {
             position: absolute;
             top: 15px;
@@ -208,7 +203,7 @@
         .btn-roblox.adventure { background: #4169E1; box-shadow: 0 6px 0 #1E3A8A; }
         .btn-roblox.shop { background: #FF4500; box-shadow: 0 6px 0 #B22222; }
 
-        /* --- Player Character --- */
+        /* --- Player --- */
         #player-wrapper {
             position: absolute;
             z-index: 10;
@@ -223,8 +218,6 @@
             animation: idleFloat 2.2s ease-in-out infinite;
         }
         #player-wrapper.bounce img { animation: none; animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        /* --- Lemon Bow (Weapon) --- */
         #player-wrapper .weapon-holder {
             position: absolute;
             display: none;
@@ -237,7 +230,6 @@
         }
         #player-wrapper .weapon-holder.active { display: block; }
 
-        /* Character Animations */
         @keyframes idleFloat {
             0% { transform: rotate(-3deg) scale(1); }
             30% { transform: rotate(3deg) scale(1.04) translateY(-4px); }
@@ -252,7 +244,7 @@
             100% { transform: scale(1) rotate(0) translateY(0); }
         }
 
-        /* --- Joystick (Mobile & PC) --- */
+        /* --- Joystick --- */
         .joystick {
             position: absolute;
             bottom: 20px;
@@ -294,7 +286,7 @@
         .joystick .right { grid-column: 3; grid-row: 2; }
         .joystick .down { grid-column: 2; grid-row: 3; }
 
-        /* --- Adventure Mode (Worm Fight) --- */
+        /* --- Adventure Mode --- */
         #adventureOverlay {
             position: absolute;
             inset: 0;
@@ -358,7 +350,6 @@
         .attack-btn:active { transform: translateY(6px); box-shadow: 0 4px 0 #B22222; }
         .attack-btn:disabled { opacity: 0.5; transform: translateY(6px); pointer-events: none; }
 
-        /* --- Lemon Arrow Projectile --- */
         .lemon-arrow {
             position: absolute;
             width: 30px;
@@ -371,7 +362,7 @@
             border: 2px solid #C17900;
         }
 
-        /* --- Shop Modal --- */
+        /* --- Shop --- */
         #shopModal {
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.8); z-index: 200;
@@ -397,10 +388,7 @@
         }
         .shop-item button:disabled { opacity: 0.5; transform: translateY(4px); box-shadow: none; pointer-events: none; }
 
-        /* --- Responsive Adjustments (Mobile Only) --- */
-        @media (max-width: 800px) {
-            .tree-container { width: 80vmin; height: 90vmin; }
-        }
+        @media (max-width: 800px) { .tree-container { width: 80vmin; height: 90vmin; } }
         @media (max-width: 600px) {
             .menu-card { padding: 30px 20px; }
             .menu-card h1 { font-size: 2.5rem; }
@@ -430,7 +418,8 @@
     </div>
 
     <!-- GAME WORLD -->
-    <div id="game">
+    <div id="game" onclick="resumeAudio()">
+        <!-- Thêm onclick="resumeAudio()" để xử lý lỗi âm thanh trên PC -->
         <div class="clouds">
             <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
         </div>
@@ -514,14 +503,51 @@
 
     <script>
         // ============================================================
-        // 1. GENERATE LEMON CHARACTER SPRITE (Canvas)
+        // SỬA LỖI ÂM THANH TRÊN PC (QUAN TRỌNG)
+        // ============================================================
+        let audioCtx = null;
+        
+        function initAudio() {
+            if (!audioCtx) {
+                // Tạo context nhưng chưa khởi động
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Hàm này sẽ được gọi khi người dùng click vào màn hình game
+        function resumeAudio() {
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(f, d, t='sine', v=0.3) {
+            if (!audioCtx) return;
+            // Nếu trình duyệt chưa cho phép, nó sẽ im lặng thay vì crash game
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = t; o.frequency.value = f;
+                g.gain.setValueAtTime(v, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(); o.stop(audioCtx.currentTime + d);
+            } catch(e) {
+                // Im lặng nếu lỗi
+            }
+        }
+        function playCollect() { playTone(523,0.1); setTimeout(()=>playTone(659,0.1),80); }
+        function playShoot() { playTone(300,0.1,'sawtooth',0.15); setTimeout(()=>playTone(400,0.1,'sawtooth',0.15),50); }
+        function playBuy() { playTone(440,0.15,'triangle',0.3); setTimeout(()=>playTone(554,0.15,'triangle',0.3),150); }
+
+        // ============================================================
+        // 1. GENERATE LEMON CHARACTER SPRITE
         // ============================================================
         function generateLemonSprite() {
             const c = document.createElement('canvas');
             c.width = 256; c.height = 256;
             const ctx = c.getContext('2d');
 
-            // 3D Lemon Body
             const gradient = ctx.createRadialGradient(80, 70, 20, 128, 128, 120);
             gradient.addColorStop(0, '#FFF59D');
             gradient.addColorStop(0.3, '#FDD835');
@@ -531,22 +557,18 @@
             ctx.fillStyle = gradient; ctx.fill();
             ctx.strokeStyle = '#B8860B'; ctx.lineWidth = 4; ctx.stroke();
 
-            // Glossy Highlight
             ctx.beginPath(); ctx.ellipse(90, 100, 40, 20, -0.3, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fill();
 
-            // Green Stem
             ctx.beginPath(); ctx.moveTo(128, 48); ctx.lineTo(116, 20); ctx.lineTo(140, 20); ctx.closePath();
             ctx.fillStyle = '#4CAF50'; ctx.fill();
             ctx.strokeStyle = '#2E7D32'; ctx.lineWidth = 2; ctx.stroke();
 
-            // Smiley Face
             ctx.strokeStyle = '#000000'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-            ctx.beginPath(); ctx.moveTo(95, 100); ctx.lineTo(95, 140); ctx.stroke(); // Left Eye
-            ctx.beginPath(); ctx.moveTo(161, 100); ctx.lineTo(161, 140); ctx.stroke(); // Right Eye
-            ctx.beginPath(); ctx.arc(128, 148, 32, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke(); // Smile
+            ctx.beginPath(); ctx.moveTo(95, 100); ctx.lineTo(95, 140); ctx.stroke(); 
+            ctx.beginPath(); ctx.moveTo(161, 100); ctx.lineTo(161, 140); ctx.stroke(); 
+            ctx.beginPath(); ctx.arc(128, 148, 32, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke(); 
 
-            // Rosy Cheeks
             ctx.fillStyle = 'rgba(255, 100, 100, 0.3)';
             ctx.beginPath(); ctx.ellipse(70, 150, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.ellipse(186, 150, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
@@ -578,28 +600,14 @@
         let x = 0, y = 0, score = 0, moveInterval = null;
         const STEP = 18;
         let lemonFruits = [];
-        let audioCtx = null;
         let weaponOwned = false;
         let wormMaxHP = 50, wormHP = 50;
         let isAttacking = false;
 
-        // Audio System (Web Audio API)
-        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function playTone(f, d, t='sine', v=0.3) {
-            if (!audioCtx) return;
-            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-            o.type = t; o.frequency.value = f;
-            g.gain.setValueAtTime(v, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d);
-            o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(audioCtx.currentTime + d);
-        }
-        function playCollect() { playTone(523,0.1); setTimeout(()=>playTone(659,0.1),80); }
-        function playShoot() { playTone(300,0.1,'sawtooth',0.15); setTimeout(()=>playTone(400,0.1,'sawtooth',0.15),50); }
-        function playBuy() { playTone(440,0.15,'triangle',0.3); setTimeout(()=>playTone(554,0.15,'triangle',0.3),150); }
-
         function startGame() {
+            // Khởi tạo Audio Context trước
             initAudio();
+            
             const s = generateLemonSprite();
             playerImg.src = s; battlePlayerImg.src = s;
             menu.classList.add('hidden');
@@ -630,7 +638,6 @@
             else buyWeaponBtn.disabled = true;
         }
 
-        // Spawn & Collect Lemons
         function spawnLemons(c) { lemonFruits.forEach(f=>f.remove()); lemonFruits=[]; for(let i=0;i<c;i++) createLemon(); }
         function createLemon() {
             const l = document.createElement('div');
@@ -643,4 +650,103 @@
         function checkLemonCollection() {
             const r = playerWrapper.getBoundingClientRect();
             const cx = r.left + r.width/2, cy = r.top + r.height/2;
-            for (let i=lemonF
+            for (let i=lemonFruits.length-1;i>=0;i--) {
+                const l = lemonFruits[i];
+                const lr = l.getBoundingClientRect();
+                if (Math.hypot(cx-(lr.left+lr.width/2), cy-(lr.top+lr.height/2)) < 70) {
+                    l.remove(); lemonFruits.splice(i,1);
+                    score += 5; updateScore(); playCollect(); createLemon(); break;
+                }
+            }
+        }
+
+        function moveUp(){move(0,-STEP);} function moveDown(){move(0,STEP);}
+        function moveLeft(){move(-STEP,0);} function moveRight(){move(STEP,0);}
+        document.addEventListener('keydown', e=>{
+            if (!e.key.startsWith('Arrow')) return;
+            e.preventDefault();
+            switch(e.key){ case'ArrowUp':moveUp();break; case'ArrowDown':moveDown();break; case'ArrowLeft':moveLeft();break; case'ArrowRight':moveRight();break; }
+        });
+        document.querySelectorAll('.joystick button:not(.empty)').forEach(b=>{
+            const d = b.dataset.dir;
+            const s = e=>{
+                e.preventDefault(); b.classList.add('active');
+                switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; }
+                if(moveInterval)clearInterval(moveInterval);
+                moveInterval=setInterval(()=>{ switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; } },70);
+            };
+            const st = e=>{ e.preventDefault(); b.classList.remove('active'); if(moveInterval){clearInterval(moveInterval);moveInterval=null;} };
+            b.addEventListener('mousedown',s); b.addEventListener('mouseup',st); b.addEventListener('mouseleave',st);
+            b.addEventListener('touchstart',s,{passive:false}); b.addEventListener('touchend',st,{passive:false});
+        });
+        window.addEventListener('resize', ()=>{
+            const mx = window.innerWidth-10, my = window.innerHeight-10;
+            if(x>mx)x=mx; if(y>my)y=my; updatePosition(false);
+        });
+
+        // Shop & Adventure
+        shopBtn.addEventListener('click', ()=>{ shopModal.classList.add('active'); });
+        function closeShop(){ shopModal.classList.remove('active'); }
+        function buyWeapon(){
+            if(score>=150 && !weaponOwned) {
+                score-=150; updateScore(); weaponOwned=true;
+                localStorage.setItem('weaponOwned','true');
+                buyWeaponBtn.disabled=true; buyWeaponBtn.textContent='OWNED';
+                playBuy(); closeShop();
+            }
+        }
+        adventureBtn.addEventListener('click', ()=>{
+            if(!weaponOwned){ alert('You need to buy the Lemon Bow in the Shop first!'); return; }
+            adventureOverlay.classList.add('active');
+            wormHP = wormMaxHP; updateWormUI();
+            battleWeaponHolder.classList.add('active'); weaponHolder.classList.add('active');
+            attackBtn.disabled = false;
+        });
+        function closeAdventure(){ adventureOverlay.classList.remove('active'); battleWeaponHolder.classList.remove('active'); }
+        function updateWormUI(){ let p=(wormHP/wormMaxHP)*100; wormHPBar.style.width=p+'%'; wormHPText.textContent='HP: '+wormHP+' / '+wormMaxHP; }
+
+        // Shooting
+        function attackWorm(){
+            if(isAttacking || wormHP<=0) return;
+            isAttacking = true; attackBtn.disabled = true;
+            playShoot();
+
+            const bw = document.querySelector('.battle-player .weapon-holder');
+            bw.style.transform = 'rotate(-10deg) translateX(10px)';
+            setTimeout(()=>bw.style.transform = 'rotate(-30deg)',100);
+
+            const ar = document.getElementById('battleArena');
+            const pr = document.querySelector('.battle-player').getBoundingClientRect();
+            const wr = document.querySelector('.worm').getBoundingClientRect();
+            const arenaRect = ar.getBoundingClientRect();
+            const sx = pr.right - arenaRect.left - 20;
+            const sy = pr.top - arenaRect.top + pr.height/2;
+            const ex = wr.left - arenaRect.left;
+            const ey = wr.top - arenaRect.top + wr.height/2;
+
+            const p = document.createElement('div');
+            p.className = 'lemon-arrow';
+            p.style.left = sx+'px'; p.style.top = sy+'px';
+            ar.appendChild(p);
+
+            const duration = 400, st = performance.now();
+            function animate(t){
+                const e = t - st, prog = Math.min(e/duration, 1);
+                p.style.left = (sx + (ex-sx)*prog)+'px';
+                p.style.top = (sy + (ey-sy)*prog)+'px';
+                if(prog<1) requestAnimationFrame(animate);
+                else {
+                    p.remove(); bw.style.transform = 'rotate(-30deg)';
+                    wormHP -= 5; if(wormHP<0) wormHP=0; updateWormUI(); playCollect();
+                    if(wormHP<=0) setTimeout(()=>{ score+=25; updateScore(); wormHP=wormMaxHP; updateWormUI(); isAttacking=false; attackBtn.disabled=false; },500);
+                    else setTimeout(()=>{ isAttacking=false; attackBtn.disabled=false; },400);
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        menu.style.display='flex'; game.style.display='none';
+        window.addEventListener('load', ()=>{ spawnLemons(20); });
+    </script>
+</body>
+</html>
