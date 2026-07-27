@@ -5,26 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Adventure of Lemon - Parry Shield</title>
     <style>
-        /* ------------------------------
-               CSS STYLES
-            ------------------------------ */
+        /* ===== RESET & BASE ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', 'Arial Black', sans-serif; }
         body { width: 100vw; height: 100vh; overflow: hidden; background: #6DC6E4; }
 
-        /* Clouds */
+        /* ===== CLOUDS ===== */
         .clouds { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .cloud { position: absolute; background: rgba(255, 255, 255, 0.9); border-radius: 50%; box-shadow: 40px -20px 0 20px rgba(255, 255, 255, 0.9), 80px 0 0 0 rgba(255, 255, 255, 0.9), -40px 0 0 0 rgba(255, 255, 255, 0.9); filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1)); animation: drift linear infinite; }
+        .cloud { position: absolute; background: rgba(255,255,255,0.9); border-radius: 50%; box-shadow: 40px -20px 0 20px rgba(255,255,255,0.9), 80px 0 0 0 rgba(255,255,255,0.9), -40px 0 0 0 rgba(255,255,255,0.9); filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); animation: drift linear infinite; }
         .cloud:nth-child(1) { width: 120px; height: 50px; top: 12%; animation-duration: 35s; }
         .cloud:nth-child(2) { width: 90px; height: 40px; top: 25%; animation-duration: 28s; }
         .cloud:nth-child(3) { width: 150px; height: 60px; top: 8%; animation-duration: 40s; }
         .cloud:nth-child(4) { width: 100px; height: 45px; top: 30%; animation-duration: 32s; }
         @keyframes drift { 0% { transform: translateX(-20vw); } 100% { transform: translateX(110vw); } }
 
-        /* Menu */
+        /* ===== MAIN MENU ===== */
         #menu { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: url('menu_bg.jpg') no-repeat center center; background-size: cover; z-index: 100; transition: opacity 0.8s ease; }
-        #menu::before { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
+        #menu::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         #menu.hidden { opacity: 0; pointer-events: none; }
-        .menu-card { position: relative; z-index: 1; background: linear-gradient(145deg, #FFFDE7, #FFF59D); padding: 40px 60px; border-radius: 40px; border: 8px solid #FDD835; box-shadow: 0 20px 0 #B8860B, 0 30px 60px rgba(0, 0, 0, 0.6); text-align: center; max-width: 90vw; animation: wobbleCard 3s ease-in-out infinite; }
+        .menu-card { position: relative; z-index: 1; background: linear-gradient(145deg, #FFFDE7, #FFF59D); padding: 40px 60px; border-radius: 40px; border: 8px solid #FDD835; box-shadow: 0 20px 0 #B8860B, 0 30px 60px rgba(0,0,0,0.6); text-align: center; max-width: 90vw; animation: wobbleCard 3s ease-in-out infinite; }
         @keyframes wobbleCard { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
         .menu-card h1 { font-size: 3.5rem; color: #222; text-shadow: 4px 4px 0 #FDD835; margin-bottom: 10px; }
         .menu-card p { color: #333; font-size: 1.2rem; font-weight: bold; margin-bottom: 30px; }
@@ -33,10 +31,10 @@
         .play-btn svg { width: 180px; height: 120px; transition: transform 0.2s; }
         .play-btn:hover svg { transform: scale(1.1) rotate(-3deg); }
 
-        /* Game Container */
+        /* ===== GAME CONTAINER ===== */
         #game { position: fixed; inset: 0; display: none; background: #6DC6E4; overflow: hidden; }
 
-        /* Tree */
+        /* ===== LEMON TREE ===== */
         .tree-container { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: min(65vmin, 550px); height: min(85vmin, 700px); pointer-events: none; z-index: 1; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3)); }
         .trunk { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 16%; height: 45%; background: linear-gradient(90deg, #6b4226, #8B5A2B, #6b4226); border-radius: 20px 20px 0 0; border: 4px solid #5D3A1A; }
         .canopy { position: absolute; top: -25%; left: 50%; transform: translateX(-50%); width: 160%; height: 85%; border-radius: 60% 40% 50% 50%; background: radial-gradient(circle at 30% 30%, #66bb6a, #2E8B57); border: 6px solid #1E5A3A; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.3); overflow: visible; }
@@ -47,10 +45,10 @@
         .leaf-cluster:nth-child(4) { width: 30%; height: 30%; bottom: 5%; right: 15%; }
         .leaf-cluster:nth-child(5) { width: 25%; height: 25%; top: 30%; left: 5%; }
         .lemon-fruit { position: absolute; font-size: 3.5vmin; cursor: pointer; pointer-events: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); transition: transform 0.1s; z-index: 2; animation: glowPulse 1.5s infinite alternate; }
-        @keyframes glowPulse { 0% { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); } 100% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); } }
+        @keyframes glowPulse { 0% { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); } 100% { filter: drop-shadow(0 0 15px rgba(255,215,0,0.6)); } }
 
-        /* UI Panel */
-        .ui-panel { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 5; padding: 10px 20px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 20px; border: 4px solid #222; box-shadow: 0 8px 0 #111; flex-wrap: wrap; gap: 10px; }
+        /* ===== UI PANEL ===== */
+        .ui-panel { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 5; padding: 10px 20px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 20px; border: 4px solid #222; box-shadow: 0 8px 0 #111; flex-wrap: wrap; gap: 10px; }
         .ui-panel .title { font-size: 1.4rem; font-weight: 900; color: #333; }
         .ui-panel .score { font-size: 1.2rem; font-weight: 900; color: #FDD835; background: #222; padding: 2px 15px; border-radius: 8px; }
         .ui-panel .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -59,106 +57,97 @@
         .btn-roblox.adventure { background: #4169E1; box-shadow: 0 6px 0 #1E3A8A; }
         .btn-roblox.shop { background: #FF4500; box-shadow: 0 6px 0 #B22222; }
 
-        /* Player */
+        /* ===== PLAYER ===== */
         #player-wrapper { position: absolute; z-index: 10; transform: translate(-50%, -50%); pointer-events: none; width: clamp(60px, 10vmin, 120px); height: auto; }
         #player-wrapper img { width: 100%; height: auto; display: block; filter: drop-shadow(0 10px 20px rgba(255,215,0,0.4)); animation: idleFloat 2.2s ease-in-out infinite; }
         #player-wrapper.bounce img { animation: none; animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* Parry Shield */
+        /* ===== SHIELD & SWING ===== */
         #player-wrapper .weapon-holder { position: absolute; display: none; z-index: 11; width: 80%; height: 80%; right: -45%; top: -15%; }
         #player-wrapper .weapon-holder.active { display: block; }
-        #player-wrapper .weapon-holder .shield-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); transition: transform 0.1s, filter 0.1s; }
+        #player-wrapper .weapon-holder .shield-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); transition: transform 0.15s, filter 0.15s; }
 
-        /* Parry Swing Animation */
+        /* VISIBLE SWING ANIMATION */
         @keyframes parrySwing {
             0% { transform: scale(1) rotate(0deg) translateX(0px); }
-            20% { transform: scale(1.2) rotate(90deg) translateX(40px); }
-            60% { transform: scale(1.5) rotate(180deg) translateX(-10px); }
+            25% { transform: scale(1.3) rotate(60deg) translateX(30px); }
+            50% { transform: scale(1.5) rotate(150deg) translateX(-10px); }
+            75% { transform: scale(1.2) rotate(250deg) translateX(20px); }
             100% { transform: scale(1) rotate(360deg) translateX(0px); }
         }
         #player-wrapper .weapon-holder.parrying .shield-svg {
-            animation: parrySwing 0.25s ease-in-out forwards;
-            filter: drop-shadow(0 0 60px #FFF) brightness(1.5);
+            animation: parrySwing 0.35s ease-in-out forwards;
+            filter: drop-shadow(0 0 80px #FFF) brightness(1.8) drop-shadow(0 0 30px #FFD700);
         }
 
         @keyframes idleFloat { 0% { transform: rotate(-3deg) scale(1); } 30% { transform: rotate(3deg) scale(1.04) translateY(-4px); } 60% { transform: rotate(-2deg) scale(0.96) translateY(2px); } 100% { transform: rotate(-3deg) scale(1); } }
         @keyframes lemonBounce { 0% { transform: scale(1) rotate(0); } 25% { transform: scale(1.3) rotate(12deg) translateY(-15px); } 50% { transform: scale(0.8) rotate(-6deg) translateY(8px); } 75% { transform: scale(1.1) rotate(4deg) translateY(-6px); } 100% { transform: scale(1) rotate(0) translateY(0); } }
 
-        /* Joystick */
-        .joystick { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: 70px 70px 70px; grid-template-rows: 70px 70px 70px; gap: 5px; z-index: 20; background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 30px; border: 5px solid #222; box-shadow: 0 10px 0 #111; }
-        .joystick button { background: rgba(255, 255, 255, 0.9); border: none; border-radius: 15px; font-size: 2rem; font-weight: 900; color: #222; cursor: pointer; box-shadow: 0 6px 0 #888; transition: transform 0.05s, box-shadow 0.05s; touch-action: none; outline: none; border: 3px solid #222; }
+        /* ===== JOYSTICK ===== */
+        .joystick { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: 70px 70px 70px; grid-template-rows: 70px 70px 70px; gap: 5px; z-index: 20; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 30px; border: 5px solid #222; box-shadow: 0 10px 0 #111; }
+        .joystick button { background: rgba(255,255,255,0.9); border: none; border-radius: 15px; font-size: 2rem; font-weight: 900; color: #222; cursor: pointer; box-shadow: 0 6px 0 #888; transition: transform 0.05s, box-shadow 0.05s; touch-action: none; outline: none; border: 3px solid #222; }
         .joystick button:active, .joystick button.active { transform: translateY(4px); box-shadow: 0 2px 0 #888; background: #FDD835; }
         .joystick .empty { visibility: hidden; } .joystick .up { grid-column: 2; grid-row: 1; } .joystick .left { grid-column: 1; grid-row: 2; } .joystick .right { grid-column: 3; grid-row: 2; } .joystick .down { grid-column: 2; grid-row: 3; }
 
-        /* Adventure Mode */
-        #adventureOverlay { position: absolute; inset: 0; z-index: 30; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(4px); border: 10px solid #222; overflow: hidden; }
+        /* ===== ADVENTURE MODE ===== */
+        #adventureOverlay { position: absolute; inset: 0; z-index: 30; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(30,30,30,0.85); backdrop-filter: blur(4px); border: 10px solid #222; overflow: hidden; }
         #adventureOverlay.active { display: flex; }
         .close-adventure { position: absolute; top: 15px; right: 15px; background: #FF0000; border: 4px solid #222; border-radius: 10px; padding: 5px 15px; font-weight: 900; color: #FFF; cursor: pointer; z-index: 40; }
 
         .battle-arena { width: 90%; max-width: 800px; height: 85%; background: radial-gradient(circle at 20% 30%, #A3D9A5, #4A7C59); border-radius: 20px; border: 8px solid #222; position: relative; box-shadow: inset 0 -30px 0 #556B2F; overflow: hidden; }
 
-        /* Player HP Bar */
+        /* Player HP */
         .player-hp-container { position: absolute; bottom: 20px; left: 20px; width: 220px; background: #111; border-radius: 30px; padding: 4px; border: 3px solid #000; z-index: 10; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .player-hp-bar { height: 20px; width: 100%; border-radius: 30px; transition: width 0.2s; background: linear-gradient(90deg, #FF0000, #FF8C00, #FFD700); box-shadow: 0 0 10px rgba(255, 140, 0, 0.6); }
+        .player-hp-bar { height: 20px; width: 100%; border-radius: 30px; transition: width 0.2s; background: linear-gradient(90deg, #FF0000, #FF8C00, #FFD700); box-shadow: 0 0 10px rgba(255,140,0,0.6); }
         .player-hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFF; font-weight: 900; font-size: 0.9rem; text-shadow: 0 0 4px #000; }
 
-        /* Worm HP Bar */
+        /* Worm HP */
         .enemy-hp-container { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 60%; background: #111; border-radius: 30px; padding: 4px; border: 3px solid #000; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .enemy-hp-bar { height: 20px; width: 100%; background: #FF0000; border-radius: 30px; transition: width 0.2s; box-shadow: inset 0 0 10px rgba(255,0,0,0.5); }
         .enemy-hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFF; font-weight: 900; font-size: 0.9rem; text-shadow: 0 0 4px #000; }
 
-        /* --- MEME WORM: Silly and funny --- */
-        .worm-container { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6)); z-index: 5; width: 180px; }
-        .worm-segment { width: 100%; height: 50px; background: linear-gradient(180deg, #FFD700, #FFA500); border-radius: 40px; border: 4px solid #D2691E; box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), inset 10px 10px 20px rgba(255,255,255,0.2); transform: rotate(5deg); transition: all 0.3s; }
-        .worm-segment:nth-child(2) { width: 80%; margin-left: 15px; margin-top: -20px; transform: rotate(-5deg); }
-        .worm-segment:nth-child(3) { width: 60%; margin-left: 25px; margin-top: -20px; transform: rotate(5deg); }
+        /* ===== NEW CUTE WORM ===== */
+        .worm-container { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); z-index: 5; width: 160px; }
+        .worm-segment { width: 100%; height: 45px; background: linear-gradient(180deg, #7CFC00, #32CD32); border-radius: 40px; border: 3px solid #228B22; box-shadow: inset -10px -10px 15px rgba(0,0,0,0.2), inset 10px 10px 15px rgba(255,255,255,0.3); transform: rotate(3deg); }
+        .worm-segment:nth-child(2) { width: 80%; margin-left: 10px; margin-top: -12px; transform: rotate(-3deg); }
+        .worm-segment:nth-child(3) { width: 60%; margin-left: 20px; margin-top: -12px; transform: rotate(3deg); }
 
-        /* Silly face */
-        .worm-face { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-        .worm-eyes { display: flex; gap: 25px; transform: rotate(-5deg); }
-        .worm-eyes span { width: 35px; height: 35px; background: #FFF; border-radius: 50%; border: 5px solid #222; position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.2); }
-        .worm-eyes span::after { content: ''; position: absolute; width: 18px; height: 18px; background: #000; border-radius: 50%; top: 5px; left: 5px; animation: googlyWorm 1.5s infinite alternate; }
-        .worm-eyes span:last-child::after { left: 10px; animation-duration: 2s; }
-        @keyframes googlyWorm { 0% { transform: translate(0, 0); } 100% { transform: translate(-8px, 8px); } }
+        /* Big cute eyes and smile */
+        .worm-face { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 10; }
+        .worm-eyes { display: flex; gap: 25px; }
+        .worm-eyes span { width: 32px; height: 32px; background: #FFF; border-radius: 50%; border: 4px solid #222; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.15); }
+        .worm-eyes span::after { content: ''; position: absolute; width: 14px; height: 14px; background: #000; border-radius: 50%; top: 6px; left: 6px; animation: googly 1.8s infinite alternate; }
+        .worm-eyes span:last-child::after { left: 10px; animation-duration: 2.2s; }
+        @keyframes googly { 0% { transform: translate(0,0); } 100% { transform: translate(-6px,6px); } }
 
-        /* Funny mustache */
-        .worm-mustache { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 80px; height: 10px; background: #222; border-radius: 10px; z-index: 5; }
-        .worm-mustache::before { content: ''; position: absolute; width: 40px; height: 10px; background: #222; border-radius: 10px; top: 0; left: -30px; transform: rotate(20deg); }
-        .worm-mustache::after { content: ''; position: absolute; width: 40px; height: 10px; background: #222; border-radius: 10px; top: 0; right: -30px; transform: rotate(-20deg); }
+        .worm-mouth { width: 35px; height: 18px; margin-top: 10px; background: #222; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; border: 3px solid #000; overflow: visible; position: relative; }
+        .worm-mouth::before { content: ''; position: absolute; width: 18px; height: 18px; background: #FF69B4; border-radius: 50%; top: 8px; left: 8px; border: 2px solid #222; animation: tongue 0.4s infinite alternate; }
+        @keyframes tongue { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
 
-        .worm-mouth { width: 50px; height: 25px; margin-top: 10px; background: #8B0000; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; border: 4px solid #222; overflow: visible; position: relative; }
-        .worm-mouth::before { content: ''; position: absolute; width: 25px; height: 25px; background: #FF69B4; border-radius: 50%; top: 10px; left: 12px; border: 2px solid #222; animation: tongueWag 0.3s infinite alternate; }
-        @keyframes tongueWag { 0% { transform: rotate(-20deg); } 100% { transform: rotate(20deg); } }
-
-        /* Top Hat */
-        .worm-hat { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 60px; height: 40px; background: #4B0082; border-radius: 5px 5px 0 0; border: 4px solid #222; z-index: 15; }
-        .worm-hat::before { content: ''; position: absolute; top: 40px; left: -15px; width: 90px; height: 8px; background: #4B0082; border-radius: 10px; border: 3px solid #222; }
-        .worm-hat::after { content: ''; position: absolute; top: -15px; left: 10px; width: 15px; height: 15px; background: #FFD700; border-radius: 50%; border: 3px solid #222; }
-
-        /* Spike Projectile */
-        .spike-projectile { position: absolute; width: 40px; height: 40px; pointer-events: none; z-index: 15; animation: spinSpike 0.5s linear infinite; }
+        /* ===== SPIKE PROJECTILE (slower) ===== */
+        .spike-projectile { position: absolute; width: 35px; height: 35px; pointer-events: none; z-index: 15; animation: spinSpike 0.5s linear infinite; }
         @keyframes spinSpike { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .spike-projectile::before { content: ''; position: absolute; top: 2px; left: 2px; width: 100%; height: 100%; background: #FF4500; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: 0 0 20px rgba(255, 69, 0, 0.8); }
-        .spike-projectile::after { content: ''; position: absolute; top: 4px; left: 4px; width: 32px; height: 32px; background: #FFD700; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: inset 0 -5px 10px #FFA500, 0 0 15px #FFD700; }
+        .spike-projectile::before { content: ''; position: absolute; top: 2px; left: 2px; width: 100%; height: 100%; background: #FF4500; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: 0 0 20px rgba(255,69,0,0.8); }
+        .spike-projectile::after { content: ''; position: absolute; top: 4px; left: 4px; width: 27px; height: 27px; background: #FFD700; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: inset 0 -5px 10px #FFA500, 0 0 15px #FFD700; }
 
-        /* Battle Player */
+        /* ===== BATTLE PLAYER ===== */
         .battle-player { position: absolute; bottom: 10%; left: 20%; width: clamp(70px, 8vmin, 110px); height: auto; z-index: 10; }
         .battle-player img { width: 100%; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
         .battle-player .weapon-holder { width: 100%; height: 100%; right: -80%; top: -10%; transform: rotate(-15deg); display: none; }
         .battle-player .weapon-holder.active { display: block; }
-        .battle-player .weapon-holder.parrying .shield-svg { animation: parrySwing 0.25s ease-in-out forwards; filter: drop-shadow(0 0 60px #FFF) brightness(1.5); }
+        .battle-player .weapon-holder.parrying .shield-svg { animation: parrySwing 0.35s ease-in-out forwards; filter: drop-shadow(0 0 80px #FFF) brightness(1.8) drop-shadow(0 0 30px #FFD700); }
 
-        /* Parry Button */
+        /* ===== PARRY BUTTON ===== */
         .parry-btn { position: absolute; bottom: 5%; right: 10%; background: linear-gradient(135deg, #FFD700, #FFA500); border: 6px solid #222; border-radius: 20px; padding: 15px 35px; font-size: 1.8rem; font-weight: 900; color: #222; box-shadow: 0 10px 0 #B8860B; cursor: pointer; transition: 0.05s linear, transform 0.1s; text-shadow: 0 2px 0 #FFF; }
         .parry-btn:active { transform: translateY(6px) scale(0.95); box-shadow: 0 4px 0 #B8860B; background: #FFF; }
         .parry-btn:disabled { opacity: 0.5; transform: translateY(6px); box-shadow: 0 4px 0 #B8860B; pointer-events: none; }
 
-        /* Sparkle Effect */
-        .sparkle-particle { position: absolute; width: 12px; height: 12px; background: #FFF; border-radius: 50%; pointer-events: none; z-index: 20; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
+        /* ===== SPARKLES ===== */
+        .sparkle-particle { position: absolute; width: 12px; height: 12px; border-radius: 50%; pointer-events: none; z-index: 20; }
         .sparkle-particle.yellow { background: #FFD700; box-shadow: 0 0 15px #FFD700; }
-        .sparkle-particle.white { background: #FFF; }
+        .sparkle-particle.white { background: #FFF; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
 
-        /* Shop Modal */
+        /* ===== SHOP MODAL ===== */
         #shopModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
         #shopModal.active { display: flex; }
         .shop-content { background: #FFF; padding: 30px; border-radius: 20px; border: 8px solid #222; text-align: center; min-width: 280px; }
@@ -180,7 +169,6 @@
     </style>
 </head>
 <body>
-    <!-- MAIN MENU -->
     <div id="menu">
         <div class="menu-card">
             <h1>🍋 ADVENTURE OF LEMON</h1>
@@ -194,7 +182,6 @@
         </div>
     </div>
 
-    <!-- GAME WORLD -->
     <div id="game" onclick="resumeAudio()">
         <div class="clouds"><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div></div>
         <div class="tree-container"><div class="trunk"></div><div class="canopy" id="canopy"><div class="leaf-cluster"></div><div class="leaf-cluster"></div><div class="leaf-cluster"></div><div class="leaf-cluster"></div><div class="leaf-cluster"></div></div></div>
@@ -216,7 +203,7 @@
                     <circle cx="40" cy="40" r="22" fill="#FFD700" stroke="#B8860B" stroke-width="4"/>
                     <circle cx="40" cy="40" r="14" fill="#8B4513" stroke="#3D1A00" stroke-width="3"/>
                     <circle cx="40" cy="40" r="6" fill="#FFF" filter="url(#glow)"/>
-                    <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+                    <defs><filter id="glow"><feGaussianBlur stdDeviation="3"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
                 </svg>
             </div>
         </div>
@@ -232,7 +219,6 @@
         <div id="adventureOverlay">
             <button class="close-adventure" onclick="closeAdventure()">✕</button>
             <div class="battle-arena" id="battleArena">
-                <!-- Player HP Bar -->
                 <div class="player-hp-container">
                     <div class="player-hp-bar" id="playerHPBar"></div>
                     <div class="player-hp-text" id="playerHPText">67 / 67</div>
@@ -243,12 +229,10 @@
                     <div class="enemy-hp-text" id="wormHPText">HP: 50 / 50</div>
                 </div>
                 
-                <!-- MEME WORM -->
+                <!-- CUTE NEW WORM -->
                 <div class="worm-container" id="wormContainer">
-                    <div class="worm-hat"></div>
                     <div class="worm-face">
                         <div class="worm-eyes"><span></span><span></span></div>
-                        <div class="worm-mustache"></div>
                         <div class="worm-mouth"></div>
                     </div>
                     <div class="worm-segment"></div>
@@ -272,7 +256,6 @@
         </div>
     </div>
 
-    <!-- SHOP MODAL -->
     <div id="shopModal">
         <div class="shop-content">
             <h2>🍋 LEMON SHOP</h2>
@@ -286,18 +269,15 @@
     </div>
 
     <script>
-        /* ============================================================
-           JAVASCRIPT ENGINE
-           ============================================================ */
-
-        // ----- AUDIO ENGINE -----
+        // ===== AUDIO =====
         let audioCtx = null;
         function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
         function resumeAudio() { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); }
         function playTone(f, d, t='sine', v=0.3) {
             if (!audioCtx) return;
             try {
-                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
                 o.type = t; o.frequency.value = f;
                 g.gain.setValueAtTime(v, audioCtx.currentTime);
                 g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d);
@@ -308,50 +288,49 @@
         function playCollect() { playTone(523,0.1); setTimeout(()=>playTone(659,0.1),80); }
         function playBuy() { playTone(440,0.15,'triangle',0.3); setTimeout(()=>playTone(554,0.15,'triangle',0.3),150); }
         function playWormHit() { playTone(200,0.2,'sawtooth',0.2); playTone(150,0.3,'square',0.1); }
-        
         function playParrySound() {
-            playTone(1200, 0.05, 'square', 0.4);
-            setTimeout(() => playTone(800, 0.08, 'sine', 0.3), 20);
-            setTimeout(() => playTone(1600, 0.1, 'sawtooth', 0.25), 40);
+            playTone(1200,0.05,'square',0.4);
+            setTimeout(()=>playTone(800,0.08,'sine',0.3),20);
+            setTimeout(()=>playTone(1600,0.1,'sawtooth',0.25),40);
             if (!audioCtx) return;
             try {
                 const bufferSize = audioCtx.sampleRate * 0.1;
                 const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
                 const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+                for (let i=0; i<bufferSize; i++) data[i] = (Math.random()*2-1)*(1 - i/bufferSize);
                 const noise = audioCtx.createBufferSource();
                 noise.buffer = buffer;
-                const gainNode = audioCtx.createGain();
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-                noise.connect(gainNode); gainNode.connect(audioCtx.destination);
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.1);
+                noise.connect(gain); gain.connect(audioCtx.destination);
                 noise.start();
             } catch(e) {}
         }
 
-        // ----- GENERATE LEMON SPRITE -----
+        // ===== GENERATE LEMON =====
         function generateLemonSprite() {
-            const c = document.createElement('canvas'); c.width = 256; c.height = 256;
+            const c = document.createElement('canvas'); c.width=256; c.height=256;
             const ctx = c.getContext('2d');
-            const gradient = ctx.createRadialGradient(80, 70, 20, 128, 128, 120);
-            gradient.addColorStop(0, '#FFF59D'); gradient.addColorStop(0.3, '#FDD835'); gradient.addColorStop(0.8, '#F9A825'); gradient.addColorStop(1, '#C17900');
-            ctx.beginPath(); ctx.ellipse(128, 128, 110, 80, 0, 0, Math.PI * 2);
-            ctx.fillStyle = gradient; ctx.fill(); ctx.strokeStyle = '#B8860B'; ctx.lineWidth = 4; ctx.stroke();
-            ctx.beginPath(); ctx.ellipse(90, 100, 40, 20, -0.3, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fill();
-            ctx.beginPath(); ctx.moveTo(128, 48); ctx.lineTo(116, 20); ctx.lineTo(140, 20); ctx.closePath();
-            ctx.fillStyle = '#4CAF50'; ctx.fill(); ctx.strokeStyle = '#2E7D32'; ctx.lineWidth = 2; ctx.stroke();
-            ctx.strokeStyle = '#000000'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-            ctx.beginPath(); ctx.moveTo(95, 100); ctx.lineTo(95, 140); ctx.stroke(); 
-            ctx.beginPath(); ctx.moveTo(161, 100); ctx.lineTo(161, 140); ctx.stroke(); 
-            ctx.beginPath(); ctx.arc(128, 148, 32, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke(); 
-            ctx.fillStyle = 'rgba(255, 100, 100, 0.3)';
-            ctx.beginPath(); ctx.ellipse(70, 150, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(186, 150, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
+            const grad = ctx.createRadialGradient(80,70,20,128,128,120);
+            grad.addColorStop(0,'#FFF59D'); grad.addColorStop(0.3,'#FDD835'); grad.addColorStop(0.8,'#F9A825'); grad.addColorStop(1,'#C17900');
+            ctx.beginPath(); ctx.ellipse(128,128,110,80,0,0,Math.PI*2);
+            ctx.fillStyle=grad; ctx.fill(); ctx.strokeStyle='#B8860B'; ctx.lineWidth=4; ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(90,100,40,20,-0.3,0,Math.PI*2);
+            ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fill();
+            ctx.beginPath(); ctx.moveTo(128,48); ctx.lineTo(116,20); ctx.lineTo(140,20); ctx.closePath();
+            ctx.fillStyle='#4CAF50'; ctx.fill(); ctx.strokeStyle='#2E7D32'; ctx.lineWidth=2; ctx.stroke();
+            ctx.strokeStyle='#000'; ctx.lineWidth=12; ctx.lineCap='round'; ctx.lineJoin='round';
+            ctx.beginPath(); ctx.moveTo(95,100); ctx.lineTo(95,140); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(161,100); ctx.lineTo(161,140); ctx.stroke();
+            ctx.beginPath(); ctx.arc(128,148,32,0.1*Math.PI,0.9*Math.PI); ctx.stroke();
+            ctx.fillStyle='rgba(255,100,100,0.3)';
+            ctx.beginPath(); ctx.ellipse(70,150,20,10,0,0,Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(186,150,20,10,0,0,Math.PI*2); ctx.fill();
             return c.toDataURL('image/png');
         }
 
-        // ----- GAME ENGINE -----
+        // ===== GAME ENGINE =====
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
         const playerWrapper = document.getElementById('player-wrapper');
@@ -373,71 +352,65 @@
         const battleWeaponHolder = document.getElementById('battleWeaponHolder');
         const battleArena = document.getElementById('battleArena');
 
-        let x = 0, y = 0, score = 0, moveInterval = null;
-        const STEP = 18;
-        let lemonFruits = [];
-        let weaponOwned = false;
-        let wormMaxHP = 50, wormHP = 50;
-        let playerMaxHP = 67, playerHP = 67;
-        
-        // Spike Variables
-        let isSpikeActive = false;
-        let spikeElement = null;
-        let spikeSpeed = 6;
-        let spikeDX = 0, spikeDY = 0;
-        let wormAttackTimer = 0;
-        let isParrying = false;
-        let isSpikeDeflected = false;
-        let arenaLoopId = null;
+        let x=0, y=0, score=0, moveInterval=null;
+        const STEP=18;
+        let lemonFruits=[];
+        let weaponOwned=false;
+        let wormMaxHP=50, wormHP=50;
+        let playerMaxHP=67, playerHP=67;
+        let isSpikeActive=false, spikeElement=null;
+        let spikeSpeed=3; // SLOWER
+        let spikeDX=0, spikeDY=0;
+        let wormAttackTimer=0;
+        let isParrying=false, isSpikeDeflected=false;
+        let arenaLoopId=null;
 
         function startGame() {
             initAudio();
             const s = generateLemonSprite();
-            playerImg.src = s; battlePlayerImg.src = s;
+            playerImg.src=s; battlePlayerImg.src=s;
             menu.classList.add('hidden');
             setTimeout(()=>menu.style.display='none',800);
             game.style.display='block';
             centerPlayer();
             spawnLemons(20);
-            score = 0; updateScore();
+            score=0; updateScore();
             if (localStorage.getItem('weaponOwned')==='true') {
-                weaponOwned = true; buyWeaponBtn.disabled = true; buyWeaponBtn.textContent = 'OWNED';
+                weaponOwned=true; buyWeaponBtn.disabled=true; buyWeaponBtn.textContent='OWNED';
             }
         }
-
-        function centerPlayer() { x = window.innerWidth/2; y = window.innerHeight/2; updatePosition(false); }
+        function centerPlayer() { x=window.innerWidth/2; y=window.innerHeight/2; updatePosition(false); }
         function updatePosition(bounce) {
-            playerWrapper.style.left = x + 'px'; playerWrapper.style.top = y + 'px';
+            playerWrapper.style.left=x+'px'; playerWrapper.style.top=y+'px';
             if (bounce) { playerWrapper.classList.add('bounce'); setTimeout(()=>playerWrapper.classList.remove('bounce'),350); }
         }
         function move(dx, dy) {
-            const nX = Math.min(Math.max(x+dx,10), window.innerWidth-10);
-            const nY = Math.min(Math.max(y+dy,10), window.innerHeight-10);
+            const nX=Math.min(Math.max(x+dx,10), window.innerWidth-10);
+            const nY=Math.min(Math.max(y+dy,10), window.innerHeight-10);
             if (nX!==x || nY!==y) { x=nX; y=nY; updatePosition(true); checkLemonCollection(); return true; }
             return false;
         }
         function updateScore() {
-            scoreSpan.textContent = '🍋 '+score;
-            if (score>=150 && !weaponOwned) buyWeaponBtn.disabled = false;
-            else buyWeaponBtn.disabled = true;
+            scoreSpan.textContent='🍋 '+score;
+            if (score>=150 && !weaponOwned) buyWeaponBtn.disabled=false;
+            else buyWeaponBtn.disabled=true;
         }
         function spawnLemons(c) { lemonFruits.forEach(f=>f.remove()); lemonFruits=[]; for(let i=0;i<c;i++) createLemon(); }
         function createLemon() {
-            const l = document.createElement('div');
-            l.className = 'lemon-fruit'; l.textContent = '🍋';
-            l.style.left = (5+Math.random()*90)+'%'; l.style.top = (5+Math.random()*90)+'%';
-            l.style.fontSize = (3+Math.random()*2)+'vmin';
+            const l=document.createElement('div'); l.className='lemon-fruit'; l.textContent='🍋';
+            l.style.left=(5+Math.random()*90)+'%'; l.style.top=(5+Math.random()*90)+'%';
+            l.style.fontSize=(3+Math.random()*2)+'vmin';
             canopy.appendChild(l); lemonFruits.push(l);
         }
         function checkLemonCollection() {
-            const r = playerWrapper.getBoundingClientRect();
-            const cx = r.left + r.width/2, cy = r.top + r.height/2;
+            const r=playerWrapper.getBoundingClientRect();
+            const cx=r.left+r.width/2, cy=r.top+r.height/2;
             for (let i=lemonFruits.length-1;i>=0;i--) {
-                const l = lemonFruits[i];
-                const lr = l.getBoundingClientRect();
+                const l=lemonFruits[i];
+                const lr=l.getBoundingClientRect();
                 if (Math.hypot(cx-(lr.left+lr.width/2), cy-(lr.top+lr.height/2)) < 70) {
                     l.remove(); lemonFruits.splice(i,1);
-                    score += 5; updateScore(); playCollect(); createLemon(); break;
+                    score+=5; updateScore(); playCollect(); createLemon(); break;
                 }
             }
         }
@@ -445,245 +418,160 @@
         function moveLeft(){move(-STEP,0);} function moveRight(){move(STEP,0);}
         document.addEventListener('keydown', e=>{ if(!e.key.startsWith('Arrow'))return; e.preventDefault(); switch(e.key){ case'ArrowUp':moveUp();break; case'ArrowDown':moveDown();break; case'ArrowLeft':moveLeft();break; case'ArrowRight':moveRight();break; } });
         document.querySelectorAll('.joystick button:not(.empty)').forEach(b=>{
-            const d=b.dataset.dir; const s=e=>{ e.preventDefault(); b.classList.add('active'); switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; } if(moveInterval)clearInterval(moveInterval); moveInterval=setInterval(()=>{ switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; } },70); };
+            const d=b.dataset.dir;
+            const s=e=>{ e.preventDefault(); b.classList.add('active'); switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; } if(moveInterval)clearInterval(moveInterval); moveInterval=setInterval(()=>{ switch(d){ case'up':moveUp();break; case'down':moveDown();break; case'left':moveLeft();break; case'right':moveRight();break; } },70); };
             const st=e=>{ e.preventDefault(); b.classList.remove('active'); if(moveInterval){clearInterval(moveInterval);moveInterval=null;} };
             b.addEventListener('mousedown',s); b.addEventListener('mouseup',st); b.addEventListener('mouseleave',st);
             b.addEventListener('touchstart',s,{passive:false}); b.addEventListener('touchend',st,{passive:false});
         });
         window.addEventListener('resize', ()=>{ const mx=window.innerWidth-10, my=window.innerHeight-10; if(x>mx)x=mx; if(y>my)y=my; updatePosition(false); });
 
-        // ----- SHOP LOGIC -----
+        // SHOP
         shopBtn.addEventListener('click', ()=>{ shopModal.classList.add('active'); });
         function closeShop(){ shopModal.classList.remove('active'); }
         function buyWeapon(){ if(score>=150 && !weaponOwned){ score-=150; updateScore(); weaponOwned=true; localStorage.setItem('weaponOwned','true'); buyWeaponBtn.disabled=true; buyWeaponBtn.textContent='OWNED'; playBuy(); closeShop(); } }
 
-        // ----- COLLISION HELPER -----
+        // COLLISION
         function rectIntersect(r1, r2) {
             return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
         }
 
-        // ----- ADVENTURE LOOP -----
+        // ADVENTURE LOOP
         function startAdventureLoop() {
             if (arenaLoopId) cancelAnimationFrame(arenaLoopId);
-            wormAttackTimer = 0;
+            wormAttackTimer=0;
             arenaLoop();
         }
-
         function arenaLoop() {
             if (!adventureOverlay.classList.contains('active')) return;
-            
-            // Worm shoots spike every ~1.5 seconds
             wormAttackTimer++;
+            // Shoot every ~1.5 seconds (90 frames at 60fps)
             if (wormAttackTimer >= 90 && !isSpikeActive && wormHP > 0) {
                 wormAttackTimer = 0;
                 shootSpike();
             }
-
-            // Move Spike Logic
             if (isSpikeActive && spikeElement) {
                 const rect = spikeElement.getBoundingClientRect();
-                let currentX = rect.left;
-                let currentY = rect.top;
-                
-                let directionX = spikeDX;
-                let directionY = spikeDY;
-
-                // If parried, deflect to worm
+                let curX = rect.left, curY = rect.top;
+                let dx = spikeDX, dy = spikeDY;
                 if (isSpikeDeflected) {
-                    const wormRect = document.getElementById('wormContainer').getBoundingClientRect();
-                    const wormCX = wormRect.left + wormRect.width/2;
-                    const wormCY = wormRect.top + wormRect.height/2;
-                    
-                    const dx = wormCX - currentX;
-                    const dy = wormCY - currentY;
-                    const hyp = Math.hypot(dx, dy);
-                    if (hyp > 0) {
-                        directionX = (dx / hyp) * 14;
-                        directionY = (dy / hyp) * 14;
-                    }
+                    const wRect = document.getElementById('wormContainer').getBoundingClientRect();
+                    const wCX = wRect.left + wRect.width/2;
+                    const wCY = wRect.top + wRect.height/2;
+                    const ddx = wCX - curX, ddy = wCY - curY;
+                    const hyp = Math.hypot(ddx, ddy);
+                    if (hyp > 0) { dx = (ddx/hyp)*14; dy = (ddy/hyp)*14; }
                 }
+                const newX = curX + dx, newY = curY + dy;
+                spikeElement.style.left = (newX - 17.5) + 'px';
+                spikeElement.style.top = (newY - 17.5) + 'px';
 
-                // Apply movement
-                const newX = currentX + directionX;
-                const newY = currentY + directionY;
-                spikeElement.style.left = (newX - 20) + 'px';
-                spikeElement.style.top = (newY - 20) + 'px';
-
-                // Collision detection
                 const spikeRect = spikeElement.getBoundingClientRect();
-
-                // 1. Spike touches Player (if not deflected)
                 if (!isSpikeDeflected) {
                     const pRect = document.querySelector('.battle-player').getBoundingClientRect();
                     if (rectIntersect(spikeRect, pRect)) {
-                        playerHP -= 5;
-                        updatePlayerHPUI();
-                        playWormHit();
-                        resetSpike();
-                        
-                        if (playerHP <= 0) {
-                            alert("GAME OVER! The dart got you.");
-                            closeAdventure();
-                            playerHP = playerMaxHP;
-                            updatePlayerHPUI();
-                        }
+                        playerHP -= 5; updatePlayerHPUI(); playWormHit(); resetSpike();
+                        if (playerHP <= 0) { alert("GAME OVER!"); closeAdventure(); playerHP=playerMaxHP; updatePlayerHPUI(); }
                         return;
                     }
                 } else {
-                    // 2. Deflected Spike touches Worm
                     const wRect = document.getElementById('wormContainer').getBoundingClientRect();
                     if (rectIntersect(spikeRect, wRect)) {
-                        wormHP -= 5;
-                        updateWormUI();
-                        playWormHit();
-                        resetSpike();
-                        
-                        if (wormHP <= 0) {
-                            setTimeout(()=>{
-                                score += 25;
-                                updateScore();
-                                wormHP = wormMaxHP;
-                                updateWormUI();
-                            }, 200);
-                        }
+                        wormHP -= 5; updateWormUI(); playWormHit(); resetSpike();
+                        if (wormHP <= 0) { setTimeout(()=>{ score+=25; updateScore(); wormHP=wormMaxHP; updateWormUI(); },200); }
                         return;
                     }
                 }
             }
-
             arenaLoopId = requestAnimationFrame(arenaLoop);
         }
 
-        // ----- SPIKE SHOOTING -----
         function shootSpike() {
             if (isSpikeActive || wormHP <= 0) return;
-            
-            const arena = document.getElementById('battleArena');
             const wRect = document.getElementById('wormContainer').getBoundingClientRect();
             const pRect = document.querySelector('.battle-player').getBoundingClientRect();
-            const arenaRect = arena.getBoundingClientRect();
-
-            // Start position: worm's mouth area
+            const arenaRect = battleArena.getBoundingClientRect();
             const startX = wRect.right - arenaRect.left - 20;
-            const startY = wRect.top - arenaRect.top + 30;
-
+            const startY = wRect.top - arenaRect.top + 20;
             spikeElement = document.createElement('div');
             spikeElement.className = 'spike-projectile';
             spikeElement.style.left = startX + 'px';
             spikeElement.style.top = startY + 'px';
-            arena.appendChild(spikeElement);
-
-            // Calculate vector to player's center
+            battleArena.appendChild(spikeElement);
+            // Aim at player's center
             const targetX = pRect.left + pRect.width/2;
             const targetY = pRect.top + pRect.height/2;
             const dx = targetX - (wRect.right);
-            const dy = targetY - (wRect.top + 30);
+            const dy = targetY - (wRect.top + 20);
             const hyp = Math.hypot(dx, dy);
-
-            if (hyp > 0) {
-                spikeDX = (dx / hyp) * spikeSpeed;
-                spikeDY = (dy / hyp) * spikeSpeed;
-            }
-
+            if (hyp > 0) { spikeDX = (dx/hyp)*spikeSpeed; spikeDY = (dy/hyp)*spikeSpeed; }
             isSpikeActive = true;
             isSpikeDeflected = false;
-            console.log("Spike launched!"); // Confirm in console (F12)
         }
 
         function resetSpike() {
-            if (spikeElement) {
-                spikeElement.remove();
-                spikeElement = null;
-            }
+            if (spikeElement) { spikeElement.remove(); spikeElement = null; }
             isSpikeActive = false;
             isSpikeDeflected = false;
+            // Reset timer so next shot happens soon
+            wormAttackTimer = 80; // small delay before next shot
         }
 
-        // ----- SPARKLE EFFECT -----
+        // SPARKLES
         function createSparkles(x, y) {
-            const arena = document.getElementById('battleArena');
-            const colors = ['#FFD700', '#FFF', '#FFA500', '#FFFF00'];
-            for (let i = 0; i < 30; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle-particle ' + (colors[Math.floor(Math.random() * colors.length)]);
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 30 + Math.random() * 120;
-                const tx = Math.cos(angle) * distance;
-                const ty = Math.sin(angle) * distance;
-                
-                sparkle.style.left = (x - 6) + 'px';
-                sparkle.style.top = (y - 6) + 'px';
-                sparkle.style.setProperty('--tx', tx + 'px');
-                sparkle.style.setProperty('--ty', ty + 'px');
-                sparkle.style.animation = `sparkleBurst 0.6s ease-out forwards`;
-                sparkle.style.transform = `scale(${0.5 + Math.random()})`;
-                
-                const styleSheet = document.createElement("style");
-                styleSheet.textContent = `@keyframes sparkleBurst { 0% { transform: translate(0,0) scale(1); opacity:1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity:0; } }`;
-                document.head.appendChild(styleSheet);
-                arena.appendChild(sparkle);
-                setTimeout(() => sparkle.remove(), 700);
+            const colors = ['#FFD700','#FFF','#FFA500','#FFFF00'];
+            for (let i=0; i<30; i++) {
+                const s = document.createElement('div');
+                s.className = 'sparkle-particle ' + (colors[Math.floor(Math.random()*colors.length)]);
+                const angle = Math.random()*Math.PI*2;
+                const dist = 30 + Math.random()*120;
+                const tx = Math.cos(angle)*dist, ty = Math.sin(angle)*dist;
+                s.style.left = (x-6)+'px'; s.style.top = (y-6)+'px';
+                s.style.setProperty('--tx', tx+'px'); s.style.setProperty('--ty', ty+'px');
+                s.style.animation = `sparkleBurst 0.6s ease-out forwards`;
+                s.style.transform = `scale(${0.5+Math.random()})`;
+                const style = document.createElement('style');
+                style.textContent = `@keyframes sparkleBurst { 0%{transform:translate(0,0) scale(1);opacity:1;} 100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0;} }`;
+                document.head.appendChild(style);
+                battleArena.appendChild(s);
+                setTimeout(()=>s.remove(),700);
             }
         }
 
-        // ----- PARRY FUNCTION -----
         function activateParry() {
             if (!isSpikeActive || isParrying) return;
             isParrying = true;
             parryBtn.disabled = true;
-
-            // Activate Parry Animation (Swing + Flash)
             battleWeaponHolder.classList.add('parrying');
             weaponHolder.classList.add('parrying');
-
-            // Check proximity
             const sRect = spikeElement.getBoundingClientRect();
             const pRect = document.querySelector('.battle-player').getBoundingClientRect();
             const pCX = pRect.left + pRect.width/2;
             const pCY = pRect.top + pRect.height/2;
             const sCX = sRect.left + sRect.width/2;
             const sCY = sRect.top + sRect.height/2;
-
-            // Hitbox range (generous)
             if (Math.hypot(pCX - sCX, pCY - sCY) < 200) {
-                // ULTRAKILL SUCCESSFUL PARRY!
                 playParrySound();
                 createSparkles(pCX, pCY);
-                
                 isSpikeDeflected = true;
                 spikeSpeed = 16;
-                
-                setTimeout(() => {
-                    battleWeaponHolder.classList.remove('parrying');
-                    weaponHolder.classList.remove('parrying');
-                    isParrying = false;
-                    parryBtn.disabled = false;
-                }, 300);
+                setTimeout(()=>{ battleWeaponHolder.classList.remove('parrying'); weaponHolder.classList.remove('parrying'); isParrying=false; parryBtn.disabled=false; },350);
             } else {
-                // Parry missed
-                setTimeout(() => {
-                    battleWeaponHolder.classList.remove('parrying');
-                    weaponHolder.classList.remove('parrying');
-                    isParrying = false;
-                    parryBtn.disabled = false;
-                }, 200);
+                setTimeout(()=>{ battleWeaponHolder.classList.remove('parrying'); weaponHolder.classList.remove('parrying'); isParrying=false; parryBtn.disabled=false; },200);
             }
         }
 
-        // ----- UI UPDATES -----
         function updateWormUI() {
-            let p = (wormHP / wormMaxHP) * 100;
-            wormHPBar.style.width = Math.max(0, p) + '%';
-            wormHPText.textContent = 'HP: ' + Math.max(0, wormHP) + ' / ' + wormMaxHP;
+            const p = (wormHP/wormMaxHP)*100;
+            wormHPBar.style.width = Math.max(0,p)+'%';
+            wormHPText.textContent = 'HP: '+Math.max(0,wormHP)+' / '+wormMaxHP;
         }
-
         function updatePlayerHPUI() {
-            let p = (playerHP / playerMaxHP) * 100;
-            playerHPBar.style.width = Math.max(0, p) + '%';
-            playerHPText.textContent = Math.max(0, playerHP) + ' / ' + playerMaxHP;
+            const p = (playerHP/playerMaxHP)*100;
+            playerHPBar.style.width = Math.max(0,p)+'%';
+            playerHPText.textContent = Math.max(0,playerHP)+' / '+playerMaxHP;
         }
 
-        // ----- ADVENTURE ENTRY -----
         adventureBtn.addEventListener('click', ()=>{
             if(!weaponOwned){ alert('You need to buy the Parry Shield in the Shop first!'); return; }
             adventureOverlay.classList.add('active');
@@ -696,7 +584,6 @@
             isParrying = false;
             startAdventureLoop();
         });
-
         function closeAdventure(){
             adventureOverlay.classList.remove('active');
             battleWeaponHolder.classList.remove('active');
@@ -705,7 +592,6 @@
             if (arenaLoopId) cancelAnimationFrame(arenaLoopId);
         }
 
-        // ----- INIT -----
         menu.style.display='flex'; game.style.display='none';
         window.addEventListener('load', ()=>{ spawnLemons(20); });
     </script>
