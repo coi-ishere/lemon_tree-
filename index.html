@@ -149,11 +149,10 @@
         .parry-btn:active { transform: translateY(6px) scale(0.95); box-shadow: 0 4px 0 #B8860B; background: #FFF; }
         .parry-btn:disabled { opacity: 0.5; transform: translateY(6px); box-shadow: 0 4px 0 #B8860B; pointer-events: none; }
 
-        /* ===== OPTIMIZED SPARKLES (High FPS) ===== */
+        /* ===== OPTIMIZED SPARKLES ===== */
         .sparkle-particle { position: absolute; width: 12px; height: 12px; border-radius: 50%; pointer-events: none; z-index: 20; animation: sparkleBurst 0.6s ease-out forwards; }
         .sparkle-particle.yellow { background: #FFD700; box-shadow: 0 0 15px #FFD700; }
         .sparkle-particle.white { background: #FFF; box-shadow: 0 0 10px #FFF; }
-        
         @keyframes sparkleBurst {
             0% { transform: translate(0, 0) scale(1); opacity: 1; }
             100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
@@ -377,7 +376,7 @@
         let wormMaxHP=50, wormHP=50;
         let playerMaxHP=67, playerHP=67;
         let isSpikeActive=false, spikeElement=null;
-        let spikeSpeed=4.5; // slower travel speed
+        let spikeSpeed=6; // Increased speed for aggressive tracking
         let spikeDX=0, spikeDY=0;
         let wormAttackTimer=0;
         let isParrying=false, isSpikeDeflected=false;
@@ -449,12 +448,12 @@
         function closeShop(){ shopModal.classList.remove('active'); }
         function buyWeapon(){ if(score>=150 && !weaponOwned){ score-=150; updateScore(); weaponOwned=true; localStorage.setItem('weaponOwned','true'); buyWeaponBtn.disabled=true; buyWeaponBtn.textContent='OWNED'; playBuy(); closeShop(); } }
 
-        // COLLISION (Perfect Touch Hitbox)
+        // COLLISION
         function rectIntersect(r1, r2) {
             return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
         }
 
-        // ADVENTURE LOOP (High FPS)
+        // ADVENTURE LOOP - REWRITTEN FOR AGGRESSIVE TRACKING
         function startAdventureLoop() {
             if (arenaLoopId) cancelAnimationFrame(arenaLoopId);
             wormAttackTimer=0;
@@ -463,7 +462,7 @@
         function arenaLoop() {
             if (!adventureOverlay.classList.contains('active')) return;
             
-            // Fire Spike every 3 seconds (180 frames at 60fps)
+            // Fire Spike every 3 seconds
             wormAttackTimer++;
             if (wormAttackTimer >= 180 && !isSpikeActive && wormHP > 0) {
                 wormAttackTimer = 0;
@@ -475,7 +474,7 @@
                 let curX = rect.left, curY = rect.top;
                 let dx = spikeDX, dy = spikeDY;
                 
-                // If deflected, trace back to worm's center
+                // If deflected, trace back to worm's center aggressively
                 if (isSpikeDeflected) {
                     const wRect = document.getElementById('wormContainer').getBoundingClientRect();
                     const wCX = wRect.left + wRect.width/2;
@@ -489,6 +488,17 @@
                 spikeElement.style.left = (newX - 17.5) + 'px';
                 spikeElement.style.top = (newY - 17.5) + 'px';
 
+                // **CRITICAL FIX: Off-screen cleanup** 
+                const arenaRect = battleArena.getBoundingClientRect();
+                // If the spike flies completely outside the arena, remove it and allow the next shot.
+                if (rect.left < arenaRect.left || rect.right > arenaRect.right || 
+                    rect.top < arenaRect.top || rect.bottom > arenaRect.bottom) {
+                    resetSpike();
+                    // Prevent processing collision for this frame
+                    arenaLoopId = requestAnimationFrame(arenaLoop);
+                    return;
+                }
+
                 // TOUCH COLLISION CHECKS
                 const spikeRect = spikeElement.getBoundingClientRect();
                 
@@ -498,6 +508,7 @@
                     if (rectIntersect(spikeRect, pRect)) {
                         playerHP -= 5; updatePlayerHPUI(); playWormHit(); resetSpike();
                         if (playerHP <= 0) { alert("GAME OVER!"); closeAdventure(); playerHP=playerMaxHP; updatePlayerHPUI(); }
+                        arenaLoopId = requestAnimationFrame(arenaLoop);
                         return;
                     }
                 } else {
@@ -506,6 +517,7 @@
                     if (rectIntersect(spikeRect, wRect)) {
                         wormHP -= 5; updateEnemyUI(); playWormHit(); resetSpike();
                         if (wormHP <= 0) { setTimeout(()=>{ score+=25; updateScore(); wormHP=wormMaxHP; updateEnemyUI(); },200); }
+                        arenaLoopId = requestAnimationFrame(arenaLoop);
                         return;
                     }
                 }
@@ -530,7 +542,7 @@
             spikeElement.style.top = startY + 'px';
             battleArena.appendChild(spikeElement);
             
-            // Aim directly at the player's center
+            // Calculate exact vector towards the center of the player
             const targetX = pRect.left + pRect.width/2;
             const targetY = pRect.top + pRect.height/2;
             const dx = targetX - (wRect.right);
@@ -542,16 +554,17 @@
             }
             isSpikeActive = true;
             isSpikeDeflected = false;
+            console.log("Spike fired! Target: ", targetX, targetY); // Debug tracking
         }
 
         function resetSpike() {
             if (spikeElement) { spikeElement.remove(); spikeElement = null; }
             isSpikeActive = false;
             isSpikeDeflected = false;
-            wormAttackTimer = 160; // small cooldown before next shot
+            wormAttackTimer = 160; // Reset timer for next shot
         }
 
-        // ===== LAG-FREE SPARKLE SYSTEM =====
+        // ===== SPARKLE SYSTEM =====
         function createSparkles(x, y) {
             const colors = ['#FFD700','#FFF','#FFA500','#FFFF00'];
             for (let i=0; i<30; i++) {
@@ -638,4 +651,4 @@
         window.addEventListener('load', ()=>{ spawnLemons(20); });
     </script>
 </body>
-</html>
+    </html>
