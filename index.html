@@ -377,13 +377,13 @@
         let playerMaxHP=67, playerHP=67;
         let isSpikeActive=false, spikeElement=null;
         
-        // SLOWED DOWN spike speed specifically for parry reaction time
-        let spikeSpeed=2.0; 
+        // VERY SLOW SPIKE SPEED for easy parry
+        let spikeSpeed=1.5; 
         
         let wormAttackTimer=0;
         let isParrying=false, isSpikeDeflected=false;
         let arenaLoopId=null;
-        let spikeLifetime=0; // Prevent forever loops
+        let spikeLifetime=0;
 
         function startGame() {
             initAudio();
@@ -456,7 +456,7 @@
             return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
         }
 
-        // ADVENTURE LOOP - GUARANTEED 3 SEC DELAY & SLOW HOMING
+        // ADVENTURE LOOP - GUARANTEED HOMING & SLOW SPEED
         function startAdventureLoop() {
             if (arenaLoopId) cancelAnimationFrame(arenaLoopId);
             wormAttackTimer=0;
@@ -485,7 +485,7 @@
                     dx = wCX - curX;
                     dy = wCY - curY;
                 } else {
-                    // DYNAMIC HOMING: Calculate vector to player's center EVERY FRAME
+                    // DYNAMIC HOMING: Calculate vector to player's current center EVERY FRAME
                     const pRect = document.querySelector('.battle-player').getBoundingClientRect();
                     const pCX = pRect.left + pRect.width/2;
                     const pCY = pRect.top + pRect.height/2;
@@ -496,7 +496,6 @@
                 const hyp = Math.hypot(dx, dy);
                 let moveX = 0, moveY = 0;
                 if (hyp > 0) {
-                    // Determine speed
                     const currentSpeed = isSpikeDeflected ? 16 : spikeSpeed;
                     moveX = (dx / hyp) * currentSpeed;
                     moveY = (dy / hyp) * currentSpeed;
@@ -509,7 +508,7 @@
 
                 // **LIFETIME CLEANUP (Prevents stuck spikes)**
                 spikeLifetime++;
-                if (spikeLifetime > 240) { // Auto delete after 4 seconds
+                if (spikeLifetime > 300) { // Auto delete after 5 seconds
                     resetSpike();
                     arenaLoopId = requestAnimationFrame(arenaLoop);
                     return;
