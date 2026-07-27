@@ -62,22 +62,22 @@
         #player-wrapper img { width: 100%; height: auto; display: block; filter: drop-shadow(0 10px 20px rgba(255,215,0,0.4)); animation: idleFloat 2.2s ease-in-out infinite; }
         #player-wrapper.bounce img { animation: none; animation: lemonBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* ===== SHIELD & SWING ===== */
+        /* ===== SHIELD & LONGER SWING ===== */
         #player-wrapper .weapon-holder { position: absolute; display: none; z-index: 11; width: 80%; height: 80%; right: -45%; top: -15%; }
         #player-wrapper .weapon-holder.active { display: block; }
         #player-wrapper .weapon-holder .shield-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); transition: transform 0.15s, filter 0.15s; }
 
-        /* VISIBLE SWING ANIMATION */
+        /* LONGER SWING (0.5s) with flash */
         @keyframes parrySwing {
             0% { transform: scale(1) rotate(0deg) translateX(0px); }
-            25% { transform: scale(1.3) rotate(60deg) translateX(30px); }
-            50% { transform: scale(1.5) rotate(150deg) translateX(-10px); }
-            75% { transform: scale(1.2) rotate(250deg) translateX(20px); }
+            25% { transform: scale(1.4) rotate(70deg) translateX(40px); }
+            50% { transform: scale(1.6) rotate(160deg) translateX(-15px); }
+            75% { transform: scale(1.3) rotate(260deg) translateX(25px); }
             100% { transform: scale(1) rotate(360deg) translateX(0px); }
         }
         #player-wrapper .weapon-holder.parrying .shield-svg {
-            animation: parrySwing 0.35s ease-in-out forwards;
-            filter: drop-shadow(0 0 80px #FFF) brightness(1.8) drop-shadow(0 0 30px #FFD700);
+            animation: parrySwing 0.5s ease-in-out forwards;
+            filter: drop-shadow(0 0 100px #FFF) brightness(2) drop-shadow(0 0 40px #FFD700);
         }
 
         @keyframes idleFloat { 0% { transform: rotate(-3deg) scale(1); } 30% { transform: rotate(3deg) scale(1.04) translateY(-4px); } 60% { transform: rotate(-2deg) scale(0.96) translateY(2px); } 100% { transform: rotate(-3deg) scale(1); } }
@@ -106,7 +106,7 @@
         .enemy-hp-bar { height: 20px; width: 100%; background: #FF0000; border-radius: 30px; transition: width 0.2s; box-shadow: inset 0 0 10px rgba(255,0,0,0.5); }
         .enemy-hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFF; font-weight: 900; font-size: 0.9rem; text-shadow: 0 0 4px #000; }
 
-        /* ===== NEW CUTE WORM ===== */
+        /* ===== CUTE WORM (no ugly stuff) ===== */
         .worm-container { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); z-index: 5; width: 160px; }
         .worm-segment { width: 100%; height: 45px; background: linear-gradient(180deg, #7CFC00, #32CD32); border-radius: 40px; border: 3px solid #228B22; box-shadow: inset -10px -10px 15px rgba(0,0,0,0.2), inset 10px 10px 15px rgba(255,255,255,0.3); transform: rotate(3deg); }
         .worm-segment:nth-child(2) { width: 80%; margin-left: 10px; margin-top: -12px; transform: rotate(-3deg); }
@@ -124,7 +124,7 @@
         .worm-mouth::before { content: ''; position: absolute; width: 18px; height: 18px; background: #FF69B4; border-radius: 50%; top: 8px; left: 8px; border: 2px solid #222; animation: tongue 0.4s infinite alternate; }
         @keyframes tongue { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
 
-        /* ===== SPIKE PROJECTILE (slower) ===== */
+        /* ===== SPIKE PROJECTILE (slower & reliable) ===== */
         .spike-projectile { position: absolute; width: 35px; height: 35px; pointer-events: none; z-index: 15; animation: spinSpike 0.5s linear infinite; }
         @keyframes spinSpike { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .spike-projectile::before { content: ''; position: absolute; top: 2px; left: 2px; width: 100%; height: 100%; background: #FF4500; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); box-shadow: 0 0 20px rgba(255,69,0,0.8); }
@@ -135,7 +135,7 @@
         .battle-player img { width: 100%; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
         .battle-player .weapon-holder { width: 100%; height: 100%; right: -80%; top: -10%; transform: rotate(-15deg); display: none; }
         .battle-player .weapon-holder.active { display: block; }
-        .battle-player .weapon-holder.parrying .shield-svg { animation: parrySwing 0.35s ease-in-out forwards; filter: drop-shadow(0 0 80px #FFF) brightness(1.8) drop-shadow(0 0 30px #FFD700); }
+        .battle-player .weapon-holder.parrying .shield-svg { animation: parrySwing 0.5s ease-in-out forwards; filter: drop-shadow(0 0 100px #FFF) brightness(2) drop-shadow(0 0 40px #FFD700); }
 
         /* ===== PARRY BUTTON ===== */
         .parry-btn { position: absolute; bottom: 5%; right: 10%; background: linear-gradient(135deg, #FFD700, #FFA500); border: 6px solid #222; border-radius: 20px; padding: 15px 35px; font-size: 1.8rem; font-weight: 900; color: #222; box-shadow: 0 10px 0 #B8860B; cursor: pointer; transition: 0.05s linear, transform 0.1s; text-shadow: 0 2px 0 #FFF; }
@@ -169,6 +169,7 @@
     </style>
 </head>
 <body>
+    <!-- MAIN MENU -->
     <div id="menu">
         <div class="menu-card">
             <h1>🍋 ADVENTURE OF LEMON</h1>
@@ -182,6 +183,7 @@
         </div>
     </div>
 
+    <!-- GAME -->
     <div id="game" onclick="resumeAudio()">
         <div class="clouds"><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div></div>
         <div class="tree-container"><div class="trunk"></div><div class="canopy" id="canopy"><div class="leaf-cluster"></div><div class="leaf-cluster"></div><div class="leaf-cluster"></div><div class="leaf-cluster"></div><div class="leaf-cluster"></div></div></div>
@@ -229,7 +231,7 @@
                     <div class="enemy-hp-text" id="wormHPText">HP: 50 / 50</div>
                 </div>
                 
-                <!-- CUTE NEW WORM -->
+                <!-- CUTE WORM -->
                 <div class="worm-container" id="wormContainer">
                     <div class="worm-face">
                         <div class="worm-eyes"><span></span><span></span></div>
@@ -256,6 +258,7 @@
         </div>
     </div>
 
+    <!-- SHOP -->
     <div id="shopModal">
         <div class="shop-content">
             <h2>🍋 LEMON SHOP</h2>
@@ -359,7 +362,7 @@
         let wormMaxHP=50, wormHP=50;
         let playerMaxHP=67, playerHP=67;
         let isSpikeActive=false, spikeElement=null;
-        let spikeSpeed=3; // SLOWER
+        let spikeSpeed=3.5; // slower
         let spikeDX=0, spikeDY=0;
         let wormAttackTimer=0;
         let isParrying=false, isSpikeDeflected=false;
@@ -436,7 +439,7 @@
             return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
         }
 
-        // ADVENTURE LOOP
+        // ADVENTURE LOOP - REWRITTEN FOR RELIABILITY
         function startAdventureLoop() {
             if (arenaLoopId) cancelAnimationFrame(arenaLoopId);
             wormAttackTimer=0;
@@ -445,8 +448,8 @@
         function arenaLoop() {
             if (!adventureOverlay.classList.contains('active')) return;
             wormAttackTimer++;
-            // Shoot every ~1.5 seconds (90 frames at 60fps)
-            if (wormAttackTimer >= 90 && !isSpikeActive && wormHP > 0) {
+            // Shoot every ~1.8 seconds (110 frames at 60fps)
+            if (wormAttackTimer >= 110 && !isSpikeActive && wormHP > 0) {
                 wormAttackTimer = 0;
                 shootSpike();
             }
@@ -488,9 +491,11 @@
 
         function shootSpike() {
             if (isSpikeActive || wormHP <= 0) return;
+            console.log("Shooting spike"); // Debug
             const wRect = document.getElementById('wormContainer').getBoundingClientRect();
             const pRect = document.querySelector('.battle-player').getBoundingClientRect();
             const arenaRect = battleArena.getBoundingClientRect();
+            // Start from worm's right side
             const startX = wRect.right - arenaRect.left - 20;
             const startY = wRect.top - arenaRect.top + 20;
             spikeElement = document.createElement('div');
@@ -513,8 +518,7 @@
             if (spikeElement) { spikeElement.remove(); spikeElement = null; }
             isSpikeActive = false;
             isSpikeDeflected = false;
-            // Reset timer so next shot happens soon
-            wormAttackTimer = 80; // small delay before next shot
+            wormAttackTimer = 90; // short delay before next shot
         }
 
         // SPARKLES
@@ -555,9 +559,9 @@
                 createSparkles(pCX, pCY);
                 isSpikeDeflected = true;
                 spikeSpeed = 16;
-                setTimeout(()=>{ battleWeaponHolder.classList.remove('parrying'); weaponHolder.classList.remove('parrying'); isParrying=false; parryBtn.disabled=false; },350);
+                setTimeout(()=>{ battleWeaponHolder.classList.remove('parrying'); weaponHolder.classList.remove('parrying'); isParrying=false; parryBtn.disabled=false; },500);
             } else {
-                setTimeout(()=>{ battleWeaponHolder.classList.remove('parrying'); weaponHolder.classList.remove('parrying'); isParrying=false; parryBtn.disabled=false; },200);
+                setTimeout(()=>{ battleWeaponHolder.classList.remove('parrying'); weaponHolder.classList.remove('parrying'); isParrying=false; parryBtn.disabled=false; },250);
             }
         }
 
