@@ -587,9 +587,10 @@
             </div>
         </div>
 
-        <!-- Player character - change this file to the image you just uploaded -->
+        <!-- PLAYER WRAPPER -->
         <div id="player-wrapper">
-            <img id="player" src="smile_lemon.png" alt="Smile Lemon">
+            <!-- The character is now generated via JavaScript canvas, ensuring it never fails to load -->
+            <img id="player" alt="Lemon Character">
             <div class="sword-holder" id="swordHolder">
                 <svg viewBox="0 0 50 100">
                     <rect x="20" y="10" width="10" height="60" fill="#CCC" stroke="#333" stroke-width="3"/>
@@ -622,7 +623,7 @@
                     <div class="worm-segment"></div>
                 </div>
                 <div class="battle-player" id="battlePlayer">
-                    <img src="smile_lemon.png">
+                    <img src="">
                     <div class="sword-holder" id="battleSwordHolder">
                         <svg viewBox="0 0 50 100">
                             <rect x="20" y="10" width="10" height="60" fill="#CCC" stroke="#333" stroke-width="3"/>
@@ -650,9 +651,76 @@
     </div>
 
     <script>
+        // ============================================================
+        // CHARACTER GENERATION (Self-contained Canvas rendering)
+        // ============================================================
+        function generateLemonSprite() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+
+            // Lemon Body
+            ctx.beginPath();
+            ctx.ellipse(64, 64, 55, 40, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#FDD835'; // Bright yellow
+            ctx.fill();
+            ctx.strokeStyle = '#F9A825'; // Lemon yellow shadow border
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Top Green Tip
+            ctx.beginPath();
+            ctx.moveTo(64, 24);
+            ctx.lineTo(58, 12);
+            ctx.lineTo(70, 12);
+            ctx.closePath();
+            ctx.fillStyle = '#66BB6A'; // Light green
+            ctx.fill();
+
+            // Bottom Green Tip
+            ctx.beginPath();
+            ctx.moveTo(64, 104);
+            ctx.lineTo(58, 116);
+            ctx.lineTo(70, 116);
+            ctx.closePath();
+            ctx.fillStyle = '#66BB6A';
+            ctx.fill();
+
+            // DRAWN SMILEY FACE (Matches the provided image)
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 7;
+            ctx.lineCap = 'round';
+
+            // Left Eye
+            ctx.beginPath();
+            ctx.moveTo(50, 52);
+            ctx.lineTo(50, 70);
+            ctx.stroke();
+
+            // Right Eye
+            ctx.beginPath();
+            ctx.moveTo(78, 52);
+            ctx.lineTo(78, 70);
+            ctx.stroke();
+
+            // Smile
+            ctx.beginPath();
+            ctx.arc(64, 74, 16, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+
+            return canvas.toDataURL('image/png');
+        }
+
+        // ============================================================
+        // GAME ENGINE
+        // ============================================================
+
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
         const playerWrapper = document.getElementById('player-wrapper');
+        const playerImg = document.getElementById('player');
+        const battlePlayerImg = document.querySelector('#battlePlayer img');
         const scoreSpan = document.getElementById('scoreDisplay');
         const canopy = document.getElementById('canopy');
         const shopModal = document.getElementById('shopModal');
@@ -694,6 +762,12 @@
 
         function startGame() {
             initAudio();
+            
+            // GENERATE THE CHARACTER SPRITE AND APPLY IT
+            const spriteSrc = generateLemonSprite();
+            playerImg.src = spriteSrc;
+            battlePlayerImg.src = spriteSrc;
+
             menu.classList.add('hidden');
             setTimeout(() => menu.style.display = 'none', 800);
             game.style.display = 'block';
@@ -817,4 +891,4 @@
         window.addEventListener('load', () => { spawnLemons(20); });
     </script>
 </body>
-</html> 
+</html>
